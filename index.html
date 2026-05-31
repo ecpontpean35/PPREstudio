@@ -54,17 +54,26 @@ button{
   padding:9px;
   cursor:pointer;
   font-weight:600;
+  margin-bottom:6px;
 }
 
 .main-btn{
   width:100%;
   background:#2563eb;
   color:white;
-  margin-top:10px;
 }
 
 .main-btn:hover{
   background:#1d4ed8;
+}
+
+.secondary-btn{
+  width:100%;
+  background:#e5e7eb;
+}
+
+.secondary-btn:hover{
+  background:#cbd5e1;
 }
 
 /* STUDENTS */
@@ -119,10 +128,6 @@ button{
   font-size:11px;
 }
 
-.levels button:hover{
-  background:#cbd5e1;
-}
-
 .levels button.active{
   background:#2563eb;
   color:white;
@@ -139,11 +144,6 @@ button{
   font-size:12px;
 }
 
-.ref-level{
-  font-weight:bold;
-  color:#1d4ed8;
-}
-
 /* OUTPUT */
 
 .output{
@@ -156,8 +156,26 @@ button{
   line-height:1.5;
 }
 
-.section{
-  margin-bottom:18px;
+/* PRINT */
+
+@media print{
+
+body{
+  background:white;
+}
+
+.panel{
+  border:none;
+}
+
+button,input{
+  display:none;
+}
+
+.app{
+  display:block;
+}
+
 }
 
 </style>
@@ -176,6 +194,8 @@ button{
 <input id="studentName" placeholder="Nom élève">
 
 <button class="main-btn" onclick="addStudent()">Ajouter élève</button>
+
+<button class="secondary-btn" onclick="clearStudents()">Effacer liste</button>
 
 <div id="studentList"></div>
 
@@ -261,18 +281,6 @@ button{
 </div>
 </div>
 
-<div class="skill" data-skill="problemes">
-<div class="skill-title">Résolution de problèmes</div>
-<div class="levels">
-<button onclick="setLevel('problemes',1)">N1</button>
-<button onclick="setLevel('problemes',2)">N2</button>
-<button onclick="setLevel('problemes',3)">N3</button>
-<button onclick="setLevel('problemes',4)">N4</button>
-<button onclick="setLevel('problemes',5)">N5</button>
-<button onclick="setLevel('problemes',6)">N6</button>
-</div>
-</div>
-
 </div>
 
 <!-- METHODO -->
@@ -293,21 +301,13 @@ button{
 </div>
 </div>
 
-<div class="skill" data-skill="autonomie">
-<div class="skill-title">Autonomie</div>
-<div class="levels">
-<button onclick="setLevel('autonomie',1)">N1</button>
-<button onclick="setLevel('autonomie',2)">N2</button>
-<button onclick="setLevel('autonomie',3)">N3</button>
-<button onclick="setLevel('autonomie',4)">N4</button>
-<button onclick="setLevel('autonomie',5)">N5</button>
-<button onclick="setLevel('autonomie',6)">N6</button>
-</div>
-</div>
-
 </div>
 
 <button class="main-btn" onclick="generatePPRE()">Générer PPRE</button>
+
+<button class="secondary-btn" onclick="generateFamily()">Fiche famille</button>
+
+<button class="secondary-btn" onclick="window.print()">Exporter PDF / Imprimer</button>
 
 </div>
 
@@ -315,40 +315,36 @@ button{
 
 <div class="panel">
 
-<h2>Référentiel intégré</h2>
-
-<div id="reference">
+<h2>Référentiel</h2>
 
 <div class="ref-box">
-<div class="ref-level">N1</div>
-Très grande difficulté – besoin d'étayage constant.
+<b>N1</b><br>
+Très grande difficulté – réussite impossible sans aide.
 </div>
 
 <div class="ref-box">
-<div class="ref-level">N2</div>
-Compétence fragile – réussite uniquement guidée.
+<b>N2</b><br>
+Réussite guidée et fragile.
 </div>
 
 <div class="ref-box">
-<div class="ref-level">N3</div>
-Réussite partielle avec accompagnement.
+<b>N3</b><br>
+Compétence partiellement acquise.
 </div>
 
 <div class="ref-box">
-<div class="ref-level">N4</div>
-Compétence en cours d’acquisition.
+<b>N4</b><br>
+Compétence en cours de maîtrise.
 </div>
 
 <div class="ref-box">
-<div class="ref-level">N5</div>
-Compétence maîtrisée dans la plupart des situations.
+<b>N5</b><br>
+Bonne maîtrise dans les tâches habituelles.
 </div>
 
 <div class="ref-box">
-<div class="ref-level">N6</div>
+<b>N6</b><br>
 Très bonne maîtrise et autonomie.
-</div>
-
 </div>
 
 </div>
@@ -357,10 +353,10 @@ Très bonne maîtrise et autonomie.
 
 <div class="panel">
 
-<h2>PPRE généré</h2>
+<h2>Document généré</h2>
 
 <div id="output" class="output">
-Aucun PPRE généré.
+Aucun document généré.
 </div>
 
 </div>
@@ -369,110 +365,56 @@ Aucun PPRE généré.
 
 <script>
 
-/* ====================== DATA ====================== */
+/* ====================== STORAGE ====================== */
 
-let students = [];
+let students = JSON.parse(localStorage.getItem("ppre_students")) || [];
+
 let selectedStudent = null;
 
-let levels = {};
+let levels = JSON.parse(localStorage.getItem("ppre_levels")) || {};
+
+/* ====================== ENGINE ====================== */
 
 const engine = {
 
 lecture:{
-1:{
-objectif:"Identifier quelques mots familiers.",
-aide:"Lecture accompagnée quotidienne."
-},
-2:{
-objectif:"Lire des phrases simples avec guidage.",
-aide:"Surlignage et reformulation orale."
-},
-3:{
-objectif:"Comprendre un texte court.",
-aide:"Questionnement guidé."
-}
+1:{obj:"Identifier quelques mots.",aid:"Lecture accompagnée."},
+2:{obj:"Lire phrases simples.",aid:"Surlignage et guidage."},
+3:{obj:"Comprendre texte court.",aid:"Questionnement guidé."}
 },
 
 comprehension:{
-1:{
-objectif:"Repérer des informations explicites.",
-aide:"Questions fermées."
-},
-2:{
-objectif:"Comprendre l’essentiel d’un texte.",
-aide:"Lecture fractionnée."
-}
+1:{obj:"Repérer infos explicites.",aid:"Questions fermées."},
+2:{obj:"Comprendre texte simple.",aid:"Lecture fractionnée."}
 },
 
 ecriture:{
-1:{
-objectif:"Produire des mots lisibles.",
-aide:"Modèles et lignage adapté."
-},
-2:{
-objectif:"Écrire des phrases simples.",
-aide:"Banque de mots."
-}
+1:{obj:"Produire mots lisibles.",aid:"Lignage adapté."},
+2:{obj:"Écrire phrases simples.",aid:"Banque de mots."}
 },
 
 numeration:{
-1:{
-objectif:"Reconnaître les nombres simples.",
-aide:"Manipulation concrète."
-},
-2:{
-objectif:"Comparer des nombres.",
-aide:"Droite numérique."
-}
+1:{obj:"Reconnaître les nombres.",aid:"Manipulation."},
+2:{obj:"Comparer nombres.",aid:"Droite numérique."}
 },
 
 calcul:{
-1:{
-objectif:"Calculer avec aide.",
-aide:"Procédures guidées."
-},
-2:{
-objectif:"Utiliser des stratégies simples.",
-aide:"Manipulation et schémas."
-}
-},
-
-problemes:{
-1:{
-objectif:"Comprendre la situation problème.",
-aide:"Lecture guidée."
-},
-2:{
-objectif:"Identifier l’opération utile.",
-aide:"Schématisation."
-}
+1:{obj:"Calculer avec aide.",aid:"Procédures guidées."},
+2:{obj:"Utiliser stratégies simples.",aid:"Schémas et manipulation."}
 },
 
 attention:{
-1:{
-objectif:"Maintenir l’attention quelques minutes.",
-aide:"Consignes courtes."
-},
-2:{
-objectif:"Rester engagé dans la tâche.",
-aide:"Fractionnement."
-}
-},
-
-autonomie:{
-1:{
-objectif:"Commencer une tâche avec aide.",
-aide:"Guidage pas à pas."
-},
-2:{
-objectif:"Utiliser des outils connus.",
-aide:"Checklist visuelle."
-}
+1:{obj:"Maintenir attention courte.",aid:"Consignes courtes."},
+2:{obj:"Rester engagé.",aid:"Fractionnement des tâches."}
 }
 
 };
 
-/* ====================== ELEVES ====================== */
+/* ====================== INIT ====================== */
+
+renderStudents();
+
+/* ====================== STUDENTS ====================== */
 
 function addStudent(){
 
@@ -481,6 +423,8 @@ let name = document.getElementById("studentName").value;
 if(!name) return;
 
 students.push(name);
+
+saveStudents();
 
 document.getElementById("studentName").value="";
 
@@ -510,11 +454,33 @@ renderStudents();
 
 }
 
-/* ====================== NIVEAUX ====================== */
+function clearStudents(){
+
+if(confirm("Effacer tous les élèves ?")){
+
+students=[];
+
+saveStudents();
+
+renderStudents();
+
+}
+
+}
+
+function saveStudents(){
+
+localStorage.setItem("ppre_students",JSON.stringify(students));
+
+}
+
+/* ====================== LEVELS ====================== */
 
 function setLevel(skill,level){
 
 levels[skill]=level;
+
+localStorage.setItem("ppre_levels",JSON.stringify(levels));
 
 document.querySelectorAll(`[data-skill="${skill}"] button`)
 .forEach((btn,i)=>{
@@ -529,13 +495,16 @@ btn.classList.add("active");
 
 }
 
-/* ====================== GENERATION ====================== */
+/* ====================== PPRE ====================== */
 
 function generatePPRE(){
 
 if(selectedStudent===null){
+
 alert("Sélectionner un élève");
+
 return;
+
 }
 
 let name = students[selectedStudent];
@@ -566,22 +535,59 @@ if(engine[skill] && engine[skill][lvl]){
 
 text += skill.toUpperCase() + "\n";
 
-text += "Objectif : " + engine[skill][lvl].objectif + "\n";
+text += "Objectif : " + engine[skill][lvl].obj + "\n";
 
-text += "Aide : " + engine[skill][lvl].aide + "\n\n";
+text += "Aide : " + engine[skill][lvl].aid + "\n\n";
 
 }
 
 });
 
 text += "AMÉNAGEMENTS\n";
-text += "- Consignes reformulées\n";
+text += "- Reformulation des consignes\n";
 text += "- Étayage progressif\n";
-text += "- Valorisation des réussites\n\n";
+text += "- Valorisation des réussites\n";
 
-text += "PARTENARIAT FAMILLE\n";
-text += "- Encourager la lecture quotidienne\n";
-text += "- Vérifier les leçons régulièrement\n";
+document.getElementById("output").innerText=text;
+
+}
+
+/* ====================== FAMILY ====================== */
+
+function generateFamily(){
+
+if(selectedStudent===null){
+
+alert("Sélectionner un élève");
+
+return;
+
+}
+
+let name = students[selectedStudent];
+
+let text = "FICHE FAMILLE – " + name + "\n\n";
+
+text += "Votre enfant bénéficie actuellement d’un accompagnement personnalisé.\n\n";
+
+text += "Objectifs prioritaires :\n";
+
+Object.keys(levels).forEach(skill=>{
+
+let lvl = levels[skill];
+
+if(engine[skill] && engine[skill][lvl]){
+
+text += "- " + engine[skill][lvl].obj + "\n";
+
+}
+
+});
+
+text += "\nConseils aux familles :\n";
+text += "- Encourager la lecture régulière\n";
+text += "- Vérifier les devoirs et le matériel\n";
+text += "- Valoriser les progrès réalisés\n";
 
 document.getElementById("output").innerText=text;
 
