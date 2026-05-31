@@ -2,92 +2,69 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>PPRE Studio Inspection Pro</title>
+<title>PPRE Studio – Assistant Inspection</title>
 
 <style>
-
 body{
   margin:0;
-  font-family:Arial, sans-serif;
-  background:#eef2f7;
-  color:#1f2937;
+  font-family:Arial;
+  background:#f3f4f6;
 }
 
 .app{
   display:grid;
-  grid-template-columns:260px 360px 320px 1fr;
+  grid-template-columns:260px 360px 1fr 1fr;
   height:100vh;
 }
 
 /* PANELS */
-
 .panel{
   background:white;
-  border-right:1px solid #d1d5db;
+  border-right:1px solid #e5e7eb;
   padding:14px;
   overflow:auto;
 }
 
 h2{
-  font-size:13px;
-  text-transform:uppercase;
+  font-size:12px;
   color:#6b7280;
-  margin-top:0;
+  text-transform:uppercase;
 }
 
 /* INPUT */
-
 input{
   width:100%;
-  padding:10px;
-  border:1px solid #cbd5e1;
-  border-radius:8px;
+  padding:8px;
+  border:1px solid #d1d5db;
+  border-radius:6px;
   margin-bottom:8px;
-  box-sizing:border-box;
 }
-
-/* BUTTONS */
 
 button{
+  width:100%;
+  padding:8px;
   border:none;
-  border-radius:8px;
-  padding:9px;
+  border-radius:6px;
   cursor:pointer;
-  font-weight:600;
-  margin-bottom:6px;
+  margin-top:6px;
 }
 
-.main-btn{
-  width:100%;
+.primary{
   background:#2563eb;
   color:white;
 }
 
-.main-btn:hover{
-  background:#1d4ed8;
-}
-
-.secondary-btn{
-  width:100%;
+.secondary{
   background:#e5e7eb;
 }
 
-.secondary-btn:hover{
-  background:#cbd5e1;
-}
-
-/* STUDENTS */
-
+/* ELEVE */
 .student{
-  padding:10px;
-  border:1px solid #d1d5db;
-  border-radius:8px;
+  padding:8px;
+  border:1px solid #e5e7eb;
   margin-top:6px;
+  border-radius:6px;
   cursor:pointer;
-}
-
-.student:hover{
-  background:#f3f4f6;
 }
 
 .student.active{
@@ -95,87 +72,27 @@ button{
   border:2px solid #2563eb;
 }
 
-/* DOMAINS */
-
-.domain{
-  margin-bottom:18px;
-}
-
-.domain-title{
+/* BLOCS */
+.block-title{
   font-weight:bold;
-  margin-bottom:8px;
-  color:#111827;
+  margin:10px 0 6px;
 }
 
-.skill{
-  margin-bottom:12px;
-}
-
-.skill-title{
+/* CHECKBOX */
+label{
+  display:block;
   font-size:13px;
-  margin-bottom:4px;
-}
-
-.levels{
-  display:flex;
-  flex-wrap:wrap;
-}
-
-.levels button{
-  width:30%;
-  margin:2px;
-  background:#e5e7eb;
-  font-size:11px;
-}
-
-.levels button.active{
-  background:#2563eb;
-  color:white;
-}
-
-/* REFERENCE */
-
-.ref-box{
-  background:#f8fafc;
-  border-left:4px solid #2563eb;
-  padding:8px;
-  margin-bottom:8px;
-  border-radius:6px;
-  font-size:12px;
+  margin:4px 0;
 }
 
 /* OUTPUT */
-
 .output{
   white-space:pre-line;
+  padding:10px;
   background:#f9fafb;
-  border:1px solid #d1d5db;
-  border-radius:8px;
-  padding:12px;
+  border:1px solid #e5e7eb;
+  border-radius:6px;
   font-size:13px;
-  line-height:1.5;
-}
-
-/* PRINT */
-
-@media print{
-
-body{
-  background:white;
-}
-
-.panel{
-  border:none;
-}
-
-button,input{
-  display:none;
-}
-
-.app{
-  display:block;
-}
-
 }
 
 </style>
@@ -185,179 +102,73 @@ button,input{
 
 <div class="app">
 
-<!-- ====================== ELEVES ====================== -->
-
+<!-- ================= ELEVES ================= -->
 <div class="panel">
 
 <h2>Élèves</h2>
 
-<input id="studentName" placeholder="Nom élève">
+<input id="name" placeholder="Nom élève">
+<button class="primary" onclick="addStudent()">Ajouter</button>
 
-<button class="main-btn" onclick="addStudent()">Ajouter élève</button>
-
-<button class="secondary-btn" onclick="clearStudents()">Effacer liste</button>
-
-<div id="studentList"></div>
+<div id="students"></div>
 
 </div>
 
-<!-- ====================== COMPETENCES ====================== -->
-
+<!-- ================= ANALYSE ================= -->
 <div class="panel">
 
-<h2>Compétences</h2>
+<h2>Analyse</h2>
 
-<!-- FRANCAIS -->
+<div class="block-title">Compétences</div>
 
-<div class="domain">
+<select id="skill" onchange="loadLevelOptions()">
+<option value="">-- choisir --</option>
+<option value="lecture">Lecture</option>
+<option value="comprehension">Compréhension</option>
+<option value="ecriture">Écriture</option>
+<option value="maths">Maths</option>
+<option value="attention">Attention</option>
+</select>
 
-<div class="domain-title">Français</div>
+<div class="block-title">Niveau estimé</div>
 
-<div class="skill" data-skill="lecture">
-<div class="skill-title">Lecture</div>
-<div class="levels">
-<button onclick="setLevel('lecture',1)">N1</button>
-<button onclick="setLevel('lecture',2)">N2</button>
-<button onclick="setLevel('lecture',3)">N3</button>
-<button onclick="setLevel('lecture',4)">N4</button>
-<button onclick="setLevel('lecture',5)">N5</button>
-<button onclick="setLevel('lecture',6)">N6</button>
-</div>
-</div>
-
-<div class="skill" data-skill="comprehension">
-<div class="skill-title">Compréhension</div>
-<div class="levels">
-<button onclick="setLevel('comprehension',1)">N1</button>
-<button onclick="setLevel('comprehension',2)">N2</button>
-<button onclick="setLevel('comprehension',3)">N3</button>
-<button onclick="setLevel('comprehension',4)">N4</button>
-<button onclick="setLevel('comprehension',5)">N5</button>
-<button onclick="setLevel('comprehension',6)">N6</button>
-</div>
-</div>
-
-<div class="skill" data-skill="ecriture">
-<div class="skill-title">Écriture</div>
-<div class="levels">
-<button onclick="setLevel('ecriture',1)">N1</button>
-<button onclick="setLevel('ecriture',2)">N2</button>
-<button onclick="setLevel('ecriture',3)">N3</button>
-<button onclick="setLevel('ecriture',4)">N4</button>
-<button onclick="setLevel('ecriture',5)">N5</button>
-<button onclick="setLevel('ecriture',6)">N6</button>
-</div>
-</div>
+<select id="level" onchange="showSuggestions()">
+<option value="">-- niveau --</option>
+<option value="1">N1</option>
+<option value="2">N2</option>
+<option value="3">N3</option>
+<option value="4">N4</option>
+<option value="5">N5</option>
+<option value="6">N6</option>
+</select>
 
 </div>
 
-<!-- MATHS -->
-
-<div class="domain">
-
-<div class="domain-title">Mathématiques</div>
-
-<div class="skill" data-skill="numeration">
-<div class="skill-title">Numération</div>
-<div class="levels">
-<button onclick="setLevel('numeration',1)">N1</button>
-<button onclick="setLevel('numeration',2)">N2</button>
-<button onclick="setLevel('numeration',3)">N3</button>
-<button onclick="setLevel('numeration',4)">N4</button>
-<button onclick="setLevel('numeration',5)">N5</button>
-<button onclick="setLevel('numeration',6)">N6</button>
-</div>
-</div>
-
-<div class="skill" data-skill="calcul">
-<div class="skill-title">Calcul</div>
-<div class="levels">
-<button onclick="setLevel('calcul',1)">N1</button>
-<button onclick="setLevel('calcul',2)">N2</button>
-<button onclick="setLevel('calcul',3)">N3</button>
-<button onclick="setLevel('calcul',4)">N4</button>
-<button onclick="setLevel('calcul',5)">N5</button>
-<button onclick="setLevel('calcul',6)">N6</button>
-</div>
-</div>
-
-</div>
-
-<!-- METHODO -->
-
-<div class="domain">
-
-<div class="domain-title">Méthodologie</div>
-
-<div class="skill" data-skill="attention">
-<div class="skill-title">Attention</div>
-<div class="levels">
-<button onclick="setLevel('attention',1)">N1</button>
-<button onclick="setLevel('attention',2)">N2</button>
-<button onclick="setLevel('attention',3)">N3</button>
-<button onclick="setLevel('attention',4)">N4</button>
-<button onclick="setLevel('attention',5)">N5</button>
-<button onclick="setLevel('attention',6)">N6</button>
-</div>
-</div>
-
-</div>
-
-<button class="main-btn" onclick="generatePPRE()">Générer PPRE</button>
-
-<button class="secondary-btn" onclick="generateFamily()">Fiche famille</button>
-
-<button class="secondary-btn" onclick="window.print()">Exporter PDF / Imprimer</button>
-
-</div>
-
-<!-- ====================== REFERENTIEL ====================== -->
-
+<!-- ================= SELECTION PROF ================= -->
 <div class="panel">
 
-<h2>Référentiel</h2>
+<h2>Décision enseignant</h2>
 
-<div class="ref-box">
-<b>N1</b><br>
-Très grande difficulté – réussite impossible sans aide.
-</div>
+<div class="block-title">Difficultés observées</div>
+<div id="difficulties"></div>
 
-<div class="ref-box">
-<b>N2</b><br>
-Réussite guidée et fragile.
-</div>
+<div class="block-title">Objectifs retenus</div>
+<div id="objectives"></div>
 
-<div class="ref-box">
-<b>N3</b><br>
-Compétence partiellement acquise.
-</div>
+<div class="block-title">Aides choisies</div>
+<div id="aids"></div>
 
-<div class="ref-box">
-<b>N4</b><br>
-Compétence en cours de maîtrise.
-</div>
-
-<div class="ref-box">
-<b>N5</b><br>
-Bonne maîtrise dans les tâches habituelles.
-</div>
-
-<div class="ref-box">
-<b>N6</b><br>
-Très bonne maîtrise et autonomie.
-</div>
+<button class="primary" onclick="generate()">Générer PPRE</button>
+<button class="secondary" onclick="generateFamily()">Fiche famille</button>
 
 </div>
 
-<!-- ====================== SORTIE ====================== -->
-
+<!-- ================= OUTPUT ================= -->
 <div class="panel">
 
-<h2>Document généré</h2>
+<h2>PPRE</h2>
 
-<div id="output" class="output">
-Aucun document généré.
-</div>
+<div id="output" class="output">Aucun document.</div>
 
 </div>
 
@@ -365,229 +176,151 @@ Aucun document généré.
 
 <script>
 
-/* ====================== STORAGE ====================== */
+let students=[];
+let selected=null;
 
-let students = JSON.parse(localStorage.getItem("ppre_students")) || [];
-
-let selectedStudent = null;
-
-let levels = JSON.parse(localStorage.getItem("ppre_levels")) || {};
-
-/* ====================== ENGINE ====================== */
-
-const engine = {
+const base = {
 
 lecture:{
-1:{obj:"Identifier quelques mots.",aid:"Lecture accompagnée."},
-2:{obj:"Lire phrases simples.",aid:"Surlignage et guidage."},
-3:{obj:"Comprendre texte court.",aid:"Questionnement guidé."}
+1:{d:["décodage fragile","reconnaissance mots"],o:["identifier mots","lire syllabes"],a:["lecture guidée"]},
+2:{d:["lecture lente","compréhension simple"],o:["lire phrases simples"],a:["guidage oral"]},
+3:{d:["compréhension partielle"],o:["comprendre texte court"],a:["questionnement guidé"]}
 },
 
 comprehension:{
-1:{obj:"Repérer infos explicites.",aid:"Questions fermées."},
-2:{obj:"Comprendre texte simple.",aid:"Lecture fractionnée."}
+1:{d:["non repérage infos"],o:["repérer informations simples"],a:["lecture guidée"]},
+2:{d:["compréhension fragile"],o:["comprendre l’essentiel"],a:["reformulation"]}
 },
 
 ecriture:{
-1:{obj:"Produire mots lisibles.",aid:"Lignage adapté."},
-2:{obj:"Écrire phrases simples.",aid:"Banque de mots."}
+1:{d:["tracé difficile"],o:["écrire mots"],a:["modèle"]},
+2:{d:["phrases incomplètes"],o:["écrire phrases"],a:["banque de mots"]}
 },
 
-numeration:{
-1:{obj:"Reconnaître les nombres.",aid:"Manipulation."},
-2:{obj:"Comparer nombres.",aid:"Droite numérique."}
-},
-
-calcul:{
-1:{obj:"Calculer avec aide.",aid:"Procédures guidées."},
-2:{obj:"Utiliser stratégies simples.",aid:"Schémas et manipulation."}
+maths:{
+1:{d:["numération fragile"],o:["reconnaître nombres"],a:["manipulation"]},
+2:{d:["calcul lent"],o:["calcul simple"],a:["support visuel"]}
 },
 
 attention:{
-1:{obj:"Maintenir attention courte.",aid:"Consignes courtes."},
-2:{obj:"Rester engagé.",aid:"Fractionnement des tâches."}
+1:{d:["difficulté concentration"],o:["maintenir attention"],a:["consignes courtes"]},
+2:{d:["décrochage rapide"],o:["terminer tâche"],a:["fractionnement"]}
 }
 
 };
 
-/* ====================== INIT ====================== */
+let currentSkill="";
+let currentLevel="";
+let selectedData={
+d:[],
+o:[],
+a:[]
+};
 
-renderStudents();
-
-/* ====================== STUDENTS ====================== */
+/* ================= ELEVE ================= */
 
 function addStudent(){
-
-let name = document.getElementById("studentName").value;
-
-if(!name) return;
-
-students.push(name);
-
-saveStudents();
-
-document.getElementById("studentName").value="";
-
-renderStudents();
-
+let n=document.getElementById("name").value;
+if(!n) return;
+students.push(n);
+document.getElementById("name").value="";
+render();
 }
 
-function renderStudents(){
-
-document.getElementById("studentList").innerHTML =
+function render(){
+document.getElementById("students").innerHTML=
 students.map((s,i)=>
-`
-<div class="student ${selectedStudent===i ? 'active':''}"
-onclick="selectStudent(${i})">
-${s}
-</div>
-`
+`<div class="student ${selected===i?'active':''}" onclick="select(${i})">${s}</div>`
 ).join("");
+}
+
+function select(i){
+selected=i;
+render();
+}
+
+/* ================= ANALYSE ================= */
+
+function loadLevelOptions(){
+currentSkill=document.getElementById("skill").value;
+showSuggestions();
+}
+
+function showSuggestions(){
+
+currentLevel=document.getElementById("level").value;
+
+if(!currentSkill || !currentLevel) return;
+
+let data = base[currentSkill]?.[currentLevel];
+
+if(!data) return;
+
+/* affichage propositions */
+document.getElementById("difficulties").innerHTML =
+data.d.map(x=>`<label><input type="checkbox" value="${x}" onchange="update()"> ${x}</label>`).join("");
+
+document.getElementById("objectives").innerHTML =
+data.o.map(x=>`<label><input type="checkbox" value="${x}" onchange="update()"> ${x}</label>`).join("");
+
+document.getElementById("aids").innerHTML =
+data.a.map(x=>`<label><input type="checkbox" value="${x}" onchange="update()"> ${x}</label>`).join("");
 
 }
 
-function selectStudent(i){
+/* ================= SELECTION ================= */
 
-selectedStudent=i;
+function update(){
 
-renderStudents();
+selectedData={d:[],o:[],a:[]};
 
-}
-
-function clearStudents(){
-
-if(confirm("Effacer tous les élèves ?")){
-
-students=[];
-
-saveStudents();
-
-renderStudents();
+document.querySelectorAll("#difficulties input:checked").forEach(i=>selectedData.d.push(i.value));
+document.querySelectorAll("#objectives input:checked").forEach(i=>selectedData.o.push(i.value));
+document.querySelectorAll("#aids input:checked").forEach(i=>selectedData.a.push(i.value));
 
 }
 
-}
+/* ================= PPRE ================= */
 
-function saveStudents(){
+function generate(){
 
-localStorage.setItem("ppre_students",JSON.stringify(students));
-
-}
-
-/* ====================== LEVELS ====================== */
-
-function setLevel(skill,level){
-
-levels[skill]=level;
-
-localStorage.setItem("ppre_levels",JSON.stringify(levels));
-
-document.querySelectorAll(`[data-skill="${skill}"] button`)
-.forEach((btn,i)=>{
-
-btn.classList.remove("active");
-
-if(i===level-1){
-btn.classList.add("active");
-}
-
-});
-
-}
-
-/* ====================== PPRE ====================== */
-
-function generatePPRE(){
-
-if(selectedStudent===null){
-
-alert("Sélectionner un élève");
-
+if(selected===null){
+alert("Choisir un élève");
 return;
-
 }
 
-let name = students[selectedStudent];
+let name=students[selected];
 
-let text = "PPRE – " + name + "\n\n";
+let text="PPRE – "+name+"\n\n";
 
-text += "CONSTATS\n\n";
+text+="DIFFICULTÉS\n";
+selectedData.d.forEach(x=>text+="- "+x+"\n");
 
-Object.keys(levels).forEach(skill=>{
+text+="\nOBJECTIFS\n";
+selectedData.o.forEach(x=>text+="- "+x+"\n");
 
-let lvl = levels[skill];
+text+="\nAIDES\n";
+selectedData.a.forEach(x=>text+="- "+x+"\n");
 
-if(lvl){
-
-text += "- " + skill.toUpperCase() + " : N" + lvl + "\n";
-
-}
-
-});
-
-text += "\nOBJECTIFS ET AIDES\n\n";
-
-Object.keys(levels).forEach(skill=>{
-
-let lvl = levels[skill];
-
-if(engine[skill] && engine[skill][lvl]){
-
-text += skill.toUpperCase() + "\n";
-
-text += "Objectif : " + engine[skill][lvl].obj + "\n";
-
-text += "Aide : " + engine[skill][lvl].aid + "\n\n";
-
-}
-
-});
-
-text += "AMÉNAGEMENTS\n";
-text += "- Reformulation des consignes\n";
-text += "- Étayage progressif\n";
-text += "- Valorisation des réussites\n";
+text+="\nSYNTHÈSE\n";
+text+="- Accompagnement ciblé selon analyse enseignant\n";
 
 document.getElementById("output").innerText=text;
 
 }
 
-/* ====================== FAMILY ====================== */
+/* ================= FAMILLE ================= */
 
 function generateFamily(){
 
-if(selectedStudent===null){
+let text="FICHE FAMILLE\n\n";
 
-alert("Sélectionner un élève");
+text+="Votre enfant bénéficie d’un accompagnement personnalisé.\n\n";
 
-return;
+text+="Objectifs travaillés :\n";
+selectedData.o.forEach(x=>text+="- "+x+"\n");
 
-}
-
-let name = students[selectedStudent];
-
-let text = "FICHE FAMILLE – " + name + "\n\n";
-
-text += "Votre enfant bénéficie actuellement d’un accompagnement personnalisé.\n\n";
-
-text += "Objectifs prioritaires :\n";
-
-Object.keys(levels).forEach(skill=>{
-
-let lvl = levels[skill];
-
-if(engine[skill] && engine[skill][lvl]){
-
-text += "- " + engine[skill][lvl].obj + "\n";
-
-}
-
-});
-
-text += "\nConseils aux familles :\n";
-text += "- Encourager la lecture régulière\n";
-text += "- Vérifier les devoirs et le matériel\n";
-text += "- Valoriser les progrès réalisés\n";
+text+="\nConseils :\n- Travail régulier\n- Lecture quotidienne\n- Encouragements\n";
 
 document.getElementById("output").innerText=text;
 
