@@ -6,6 +6,9 @@
 
 <style>
 body{
+  .student.active{
+  background:#dbeafe;
+  border:2px solid #2563eb;
   margin:0;
   font-family: Arial, sans-serif;
   background:#f5f7fb;
@@ -219,9 +222,11 @@ function render(){
 /* SELECTION */
 function select(i){
   selected = i;
-  document.getElementById("title").innerText = students[i];
-}
 
+  document.getElementById("title").innerText = students[i];
+
+  render(); // ⚠️ indispensable pour rafraîchir l’affichage
+}
 /* NIVEAU */
 function setLevel(skill, level){
   levels[skill] = level;
