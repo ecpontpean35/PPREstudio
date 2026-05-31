@@ -198,8 +198,10 @@ let levels = {
 function addStudent(){
   let n = document.getElementById("name").value;
   if(!n) return;
+
   students.push(n);
-  document.getElementById("name").value="";
+  document.getElementById("name").value = "";
+
   render();
 }
 
