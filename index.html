@@ -73,14 +73,25 @@ button{
 
 /* COMPÉTENCES */
 .skill{
-  margin-bottom:15px;
+  margin-bottom:16px;
+}
+
+.skill-title{
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.levels{
+  display:flex;
+  flex-wrap:wrap;
 }
 
 .levels button{
-  width:48%;
+  width:32%;
   margin:2px 1%;
   background:#e5e7eb;
   font-size:12px;
+  border-radius:6px;
 }
 
 .levels button.active{
@@ -118,8 +129,8 @@ button{
 <div class="panel">
 <h2>Compétences</h2>
 
-<div class="skill">
-<b>Lecture</b>
+<div class="skill" data-skill="lecture">
+<div class="skill-title">Lecture</div>
 <div class="levels">
 <button onclick="setLevel('lecture',1)">N1</button>
 <button onclick="setLevel('lecture',2)">N2</button>
@@ -130,8 +141,8 @@ button{
 </div>
 </div>
 
-<div class="skill">
-<b>Écriture</b>
+<div class="skill" data-skill="ecriture">
+<div class="skill-title">Écriture</div>
 <div class="levels">
 <button onclick="setLevel('ecriture',1)">N1</button>
 <button onclick="setLevel('ecriture',2)">N2</button>
@@ -142,8 +153,8 @@ button{
 </div>
 </div>
 
-<div class="skill">
-<b>Attention</b>
+<div class="skill" data-skill="attention">
+<div class="skill-title">Attention</div>
 <div class="levels">
 <button onclick="setLevel('attention',1)">N1</button>
 <button onclick="setLevel('attention',2)">N2</button>
@@ -189,7 +200,7 @@ function addStudent(){
   render();
 }
 
-/* AFFICHAGE ÉLÈVES */
+/* LISTE */
 function render(){
   document.getElementById("list").innerHTML =
     students.map((s,i)=>
@@ -199,43 +210,44 @@ function render(){
     ).join("");
 }
 
-/* SÉLECTION ÉLÈVE */
+/* SÉLECTION */
 function select(i){
   selected = i;
   document.getElementById("title").innerText = students[i];
   render();
 }
 
-/* NIVEAUX */
+/* NIVEAUX (CORRIGÉ — PLUS DE BUG 2e DOMAINE) */
 function setLevel(skill, level){
+
   levels[skill] = level;
 
-  document.querySelectorAll(".skill").forEach(block=>{
-    if(block.innerText.toLowerCase().includes(skill)){
-      block.querySelectorAll("button").forEach((b,i)=>{
-        b.classList.remove("active");
-        if(i === level-1) b.classList.add("active");
-      });
-    }
-  });
+  document.querySelectorAll(`[data-skill="${skill}"] button`)
+    .forEach((btn, i) => {
+      btn.classList.remove("active");
+      if(i === level - 1){
+        btn.classList.add("active");
+      }
+    });
 }
 
-/* GÉNÉRATION PPRE */
+/* GÉNÉRATION */
 function generate(){
-  if(selected===null) return;
+
+  if(selected === null) return;
 
   let s = students[selected];
 
   let text = `PPRE – ${s}\n\n`;
 
   if(levels.lecture){
-    text += "Lecture : N"+levels.lecture+"\n";
+    text += "Lecture : N" + levels.lecture + "\n";
   }
   if(levels.ecriture){
-    text += "Écriture : N"+levels.ecriture+"\n";
+    text += "Écriture : N" + levels.ecriture + "\n";
   }
   if(levels.attention){
-    text += "Attention : N"+levels.attention+"\n";
+    text += "Attention : N" + levels.attention + "\n";
   }
 
   document.getElementById("out").innerText = text;
