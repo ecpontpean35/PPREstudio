@@ -6,6 +6,24 @@
 
 <style>
 body{
+  .levels button{
+  width:48%;
+  margin:2px 1%;
+  background:#e5e7eb;
+  color:#111827;
+  font-size:12px;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
+.levels button:hover{
+  background:#cbd5e1;
+}
+
+/* ⭐ CE QUI MANQUE : état sélectionné */
+.levels button.active{
+  background:#2563eb;
+  color:white;
+}
   .student.active{
   background:#dbeafe;
   border:2px solid #2563eb;
@@ -229,7 +247,29 @@ function select(i){
 }
 /* NIVEAU */
 function setLevel(skill, level){
+
   levels[skill] = level;
+
+  // retirer l'état actif sur tous les boutons de cette compétence
+  let container = document.querySelectorAll(".skill");
+
+  container.forEach(block => {
+
+    if(block.innerText.toLowerCase().includes(skill)){
+
+      let buttons = block.querySelectorAll("button");
+
+      buttons.forEach((b, i) => {
+        b.classList.remove("active");
+
+        if(i === level - 1){
+          b.classList.add("active");
+        }
+      });
+
+    }
+
+  });
 }
 
 /* MOTEUR SIMPLE */
