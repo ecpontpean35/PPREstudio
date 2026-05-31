@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>PPRE Studio v12</title>
+<title>PPRE Studio v13 – multi-matières</title>
 
 <style>
 body{
@@ -17,7 +17,6 @@ body{
   height:100vh;
 }
 
-/* PANELS */
 .panel{
   background:white;
   border-right:1px solid #ddd;
@@ -26,8 +25,8 @@ body{
 }
 
 h3{
-  font-size:13px;
   margin-top:10px;
+  font-size:13px;
 }
 
 .item{
@@ -46,7 +45,6 @@ h3{
   background:#93c5fd;
 }
 
-/* OUTPUT */
 .output{
   white-space:pre-wrap;
   font-size:13px;
@@ -64,7 +62,6 @@ button{
   border:none;
   cursor:pointer;
 }
-
 </style>
 </head>
 
@@ -84,7 +81,7 @@ button{
 
 <!-- ================= REFERENTIEL ================= -->
 <div class="panel">
-<h3>Référentiel Français</h3>
+<h3>Référentiel</h3>
 
 <div id="ref"></div>
 </div>
@@ -123,9 +120,11 @@ students.map((s,i)=>
 ).join("");
 }
 
-/* ================= REFERENTIEL (STRUCTURE REELLE) ================= */
+/* ================= REFERENTIEL COMPLET ================= */
 
 const referentiel = {
+
+"FRANÇAIS – Écriture":{
 "Motricité fine":[
 "tenue du crayon",
 "gestes saccadés",
@@ -152,22 +151,75 @@ const referentiel = {
 "organisation de la page",
 "repérage visuel"
 ]
+},
+
+"FRANÇAIS – Lecture":{
+"Fluence":[
+"lecture lente",
+"décodage hésitant"
+],
+"Compréhension":[
+"compréhension implicite fragile",
+"repérage informations"
+]
+},
+
+"MATHS":{
+"Numération":[
+"difficultés de dénombrement",
+"confusion unités/dizaines"
+],
+"Calcul":[
+"calcul lent",
+"erreurs de procédure"
+],
+"Problèmes":[
+"difficulté de compréhension énoncé"
+]
+},
+
+"MÉTHODOLOGIE":{
+"Attention":[
+"distractibilité",
+"difficulté de maintien"
+],
+"Organisation":[
+"oubli du matériel",
+"désorganisation"
+],
+"Mémoire":[
+"difficulté de mémorisation"
+]
+}
+
 };
 
 /* ================= AFFICHAGE ================= */
 
 function renderRef(){
 let html="";
-for(let cat in referentiel){
-html+=`<h3>${cat}</h3>`;
-referentiel[cat].forEach(item=>{
-html+=`<div class="item" onclick="toggle(this,'${item}')">${item}</div>`;
+
+for(let domaine in referentiel){
+html+=`<h3>${domaine}</h3>`;
+
+for(let cat in referentiel[domaine]){
+html+=`<strong>${cat}</strong>`;
+
+referentiel[domaine][cat].forEach(item=>{
+html+=`
+<div class="item ${selectedItems.includes(item)?'selected':''}"
+onclick="toggle(this,'${item}')">
+${item}
+</div>`;
 });
 }
+}
+
 document.getElementById("ref").innerHTML=html;
 }
 
 function toggle(el,item){
+
 if(selectedItems.includes(item)){
 selectedItems = selectedItems.filter(x=>x!==item);
 el.classList.remove("selected");
@@ -175,8 +227,10 @@ el.classList.remove("selected");
 selectedItems.push(item);
 el.classList.add("selected");
 }
+
 }
 
+/* initial */
 renderRef();
 
 /* ================= PPRE ================= */
@@ -202,7 +256,7 @@ text+="- améliorer " + i + "\n";
 
 text += "\nAIDES :\n";
 selectedItems.forEach(i=>{
-text+="- travail guidé sur " + i + "\n";
+text+="- entraînement ciblé sur " + i + "\n";
 });
 
 document.getElementById("out").innerText=text;
@@ -213,4 +267,3 @@ document.getElementById("out").innerText=text;
 
 </body>
 </html>
-
