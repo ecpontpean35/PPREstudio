@@ -6,31 +6,9 @@
 
 <style>
 body{
-  .levels button{
-  width:48%;
-  margin:2px 1%;
-  background:#e5e7eb;
-  color:#111827;
-  font-size:12px;
-  border-radius:6px;
-  border:none;
-  cursor:pointer;
-.levels button:hover{
-  background:#cbd5e1;
-}
-
-/* ⭐ CE QUI MANQUE : état sélectionné */
-.levels button.active{
-  background:#2563eb;
-  color:white;
-}
-  .student.active{
-  background:#dbeafe;
-  border:2px solid #2563eb;
   margin:0;
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   background:#f5f7fb;
-  color:#1f2937;
 }
 
 .app{
@@ -44,31 +22,23 @@ body{
   padding:16px;
   overflow:auto;
   background:white;
-}
-
-.left{
-  border-right:1px solid #e5e7eb;
-}
-
-.center{
   border-right:1px solid #e5e7eb;
 }
 
 /* TITRES */
 h2{
-  font-size:14px;
-  text-transform:uppercase;
+  font-size:13px;
   color:#6b7280;
-  margin-top:0;
+  text-transform:uppercase;
 }
 
 /* INPUT */
 input{
   width:100%;
   padding:10px;
+  margin-bottom:10px;
   border:1px solid #d1d5db;
   border-radius:8px;
-  margin-bottom:10px;
 }
 
 /* BOUTONS */
@@ -87,10 +57,6 @@ button{
   color:white;
 }
 
-.btn:hover{
-  background:#1d4ed8;
-}
-
 /* ÉLÈVES */
 .student{
   padding:10px;
@@ -100,23 +66,20 @@ button{
   cursor:pointer;
 }
 
-.student:hover{
-  background:#f3f4f6;
+.student.active{
+  background:#dbeafe;
+  border:2px solid #2563eb;
 }
 
 /* COMPÉTENCES */
 .skill{
-  padding:10px;
-  border:1px solid #e5e7eb;
-  border-radius:8px;
-  margin-bottom:10px;
+  margin-bottom:15px;
 }
 
 .levels button{
   width:48%;
   margin:2px 1%;
   background:#e5e7eb;
-  color:#111827;
   font-size:12px;
 }
 
@@ -128,11 +91,12 @@ button{
 /* OUTPUT */
 .output{
   white-space:pre-line;
+  padding:10px;
   background:#f9fafb;
-  padding:12px;
-  border-radius:8px;
   border:1px solid #e5e7eb;
+  border-radius:8px;
 }
+
 </style>
 </head>
 
@@ -140,19 +104,19 @@ button{
 
 <div class="app">
 
-<!-- ================= LEFT ================= -->
-<div class="panel left">
+<!-- ================= ÉLÈVES ================= -->
+<div class="panel">
 <h2>Classe</h2>
 
 <input id="name" placeholder="Nom élève">
-<button class="btn" onclick="addStudent()">+ Ajouter élève</button>
+<button class="btn" onclick="addStudent()">Ajouter élève</button>
 
 <div id="list"></div>
 </div>
 
-<!-- ================= CENTER ================= -->
-<div class="panel center">
-<h2>Compétences + niveaux</h2>
+<!-- ================= COMPÉTENCES ================= -->
+<div class="panel">
+<h2>Compétences</h2>
 
 <div class="skill">
 <b>Lecture</b>
@@ -193,13 +157,13 @@ button{
 <button class="btn" onclick="generate()">Générer PPRE</button>
 </div>
 
-<!-- ================= RIGHT ================= -->
-<div class="panel right">
-<h2>Document PPRE</h2>
+<!-- ================= RESULTAT ================= -->
+<div class="panel">
+<h2>PPRE</h2>
 
-<div id="title">Aucun élève</div>
+<div id="title">Aucun élève sélectionné</div>
 <br>
-<div id="out" class="output">Sélectionner un élève</div>
+<div id="out" class="output">...</div>
 </div>
 
 </div>
@@ -210,9 +174,9 @@ let students = [];
 let selected = null;
 
 let levels = {
-  lecture: null,
-  ecriture: null,
-  attention: null
+  lecture:null,
+  ecriture:null,
+  attention:null
 };
 
 /* AJOUT ÉLÈVE */
@@ -221,113 +185,60 @@ function addStudent(){
   if(!n) return;
 
   students.push(n);
-  document.getElementById("name").value = "";
-
+  document.getElementById("name").value="";
   render();
 }
 
-/* LISTE */
+/* AFFICHAGE ÉLÈVES */
 function render(){
   document.getElementById("list").innerHTML =
     students.map((s,i)=>
-      `<div class="student ${selected===i ? 'active' : ''}"
-            onclick="select(${i})">
+      `<div class="student ${selected===i?'active':''}" onclick="select(${i})">
         ${s}
       </div>`
     ).join("");
 }
 
-/* SELECTION */
+/* SÉLECTION ÉLÈVE */
 function select(i){
   selected = i;
-
   document.getElementById("title").innerText = students[i];
-
-  render(); // ⚠️ indispensable pour rafraîchir l’affichage
+  render();
 }
-/* NIVEAU */
-function setLevel(skill, level){
 
+/* NIVEAUX */
+function setLevel(skill, level){
   levels[skill] = level;
 
-  // retirer l'état actif sur tous les boutons de cette compétence
-  let container = document.querySelectorAll(".skill");
-
-  container.forEach(block => {
-
+  document.querySelectorAll(".skill").forEach(block=>{
     if(block.innerText.toLowerCase().includes(skill)){
-
-      let buttons = block.querySelectorAll("button");
-
-      buttons.forEach((b, i) => {
+      block.querySelectorAll("button").forEach((b,i)=>{
         b.classList.remove("active");
-
-        if(i === level - 1){
-          b.classList.add("active");
-        }
+        if(i === level-1) b.classList.add("active");
       });
-
     }
-
   });
 }
 
-/* MOTEUR SIMPLE */
+/* GÉNÉRATION PPRE */
 function generate(){
+  if(selected===null) return;
 
-  if(selected === null) return;
+  let s = students[selected];
 
-  let text = `PPRE – ${students[selected]}\n\n`;
+  let text = `PPRE – ${s}\n\n`;
 
   if(levels.lecture){
-    text += `Lecture (N${levels.lecture})\n`;
-    text += getAction("lecture", levels.lecture) + "\n\n";
+    text += "Lecture : N"+levels.lecture+"\n";
   }
-
   if(levels.ecriture){
-    text += `Écriture (N${levels.ecriture})\n`;
-    text += getAction("ecriture", levels.ecriture) + "\n\n";
+    text += "Écriture : N"+levels.ecriture+"\n";
   }
-
   if(levels.attention){
-    text += `Attention (N${levels.attention})\n`;
-    text += getAction("attention", levels.attention) + "\n\n";
+    text += "Attention : N"+levels.attention+"\n";
   }
 
   document.getElementById("out").innerText = text;
-}
-
-/* RÈGLES PÉDAGOGIQUES SIMPLES */
-function getAction(skill, level){
-
-  const map = {
-    lecture: [
-      "repérer des mots isolés",
-      "lire des phrases simples",
-      "comprendre un texte court",
-      "inférer des informations simples",
-      "comprendre l’implicite",
-      "analyser un texte complexe"
-    ],
-    ecriture: [
-      "tracer les lettres",
-      "écrire des mots",
-      "écrire des phrases simples",
-      "structurer un paragraphe",
-      "argumenter",
-      "produire un texte structuré"
-    ],
-    attention: [
-      "se concentrer 5 min",
-      "suivre une consigne simple",
-      "maintenir l’attention",
-      "gérer une tâche longue",
-      "auto-régulation",
-      "autonomie complète"
-    ]
-  };
-
-  return "Objectif : " + map[skill][level-1];
 }
 
 </script>
