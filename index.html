@@ -2,80 +2,164 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>PPRE Studio</title>
+<title>PPRE Studio Pro</title>
 
 <style>
 body{
-  font-family: Arial;
   margin:0;
-  background:#0f172a;
-  color:white;
+  font-family: "Segoe UI", Arial;
+  background:#0b1220;
+  color:#e5e7eb;
 }
 
-.container{
-  display:flex;
+/* ===== LAYOUT GLOBAL ===== */
+.app{
+  display:grid;
+  grid-template-columns: 280px 1fr 1fr;
   height:100vh;
 }
 
+/* ===== PANELS ===== */
 .panel{
-  padding:10px;
+  padding:16px;
   overflow:auto;
 }
 
-.left{width:30%; background:#111827;}
-.right{flex:1; background:#1f2937;}
-
-input,button{
-  width:100%;
-  padding:6px;
-  margin-top:5px;
+.left{
+  background:#111827;
+  border-right:1px solid #1f2937;
 }
 
-.student{
+.center{
+  background:#0f172a;
+  border-right:1px solid #1f2937;
+}
+
+.right{
+  background:#0b1220;
+}
+
+/* ===== TITRES ===== */
+h2{
+  font-size:14px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:#9ca3af;
+  margin-top:0;
+}
+
+/* ===== INPUT ===== */
+input{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  margin-bottom:10px;
+  background:#1f2937;
+  color:white;
+}
+
+/* ===== BOUTONS ===== */
+button{
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  margin-top:8px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.btn-primary{
+  background:#2563eb;
+  color:white;
+}
+
+.btn-secondary{
   background:#374151;
-  padding:6px;
-  margin-top:5px;
+  color:white;
+}
+
+button:hover{
+  opacity:0.9;
+}
+
+/* ===== ÉLÈVES ===== */
+.student{
+  padding:10px;
+  margin-top:6px;
+  background:#1f2937;
+  border-radius:8px;
   cursor:pointer;
 }
 
 .student:hover{
-  background:#4b5563;
+  background:#374151;
 }
 
+/* ===== CHECKBOX ===== */
+label{
+  display:block;
+  margin:6px 0;
+  font-size:14px;
+}
+
+/* ===== OUTPUT ===== */
 .output{
+  background:#0f172a;
+  padding:12px;
+  border-radius:10px;
   white-space:pre-line;
+  min-height:200px;
+  border:1px solid #1f2937;
+}
+
+/* ===== HEADER PANEL ===== */
+.header{
+  font-size:13px;
+  color:#9ca3af;
+  margin-bottom:10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="app">
 
+<!-- ================= LEFT ================= -->
 <div class="panel left">
-<h3>Élèves</h3>
+<h2>Classe</h2>
 
 <input id="name" placeholder="Nom élève">
-<button onclick="addStudent()">Ajouter</button>
+<button class="btn-primary" onclick="addStudent()">+ Ajouter élève</button>
 
 <div id="list"></div>
-
-<hr>
-
-<h4>Difficultés</h4>
-<label><input type="checkbox" value="lecture"> Lecture</label><br>
-<label><input type="checkbox" value="écriture"> Écriture</label><br>
-<label><input type="checkbox" value="attention"> Attention</label><br>
-<label><input type="checkbox" value="vocabulaire"> Vocabulaire</label><br>
-<label><input type="checkbox" value="oral"> Oral</label><br>
-
-<button onclick="generatePPRE()">Générer PPRE</button>
-<button onclick="generateFamily()">Fiche famille</button>
 </div>
 
+<!-- ================= CENTER ================= -->
+<div class="panel center">
+<h2>Analyse des besoins</h2>
+
+<div class="header">Compétences observées</div>
+
+<label><input type="checkbox" value="lecture"> Lecture</label>
+<label><input type="checkbox" value="écriture"> Écriture</label>
+<label><input type="checkbox" value="attention"> Attention</label>
+<label><input type="checkbox" value="vocabulaire"> Vocabulaire</label>
+<label><input type="checkbox" value="oral"> Oral</label>
+
+<button class="btn-primary" onclick="generatePPRE()">Générer PPRE</button>
+<button class="btn-secondary" onclick="generateFamily()">Fiche famille</button>
+</div>
+
+<!-- ================= RIGHT ================= -->
 <div class="panel right">
-<h3 id="title">Aucun élève</h3>
-<pre id="out" class="output"></pre>
+<h2>Document PPRE</h2>
+
+<div id="title" class="header">Aucun élève sélectionné</div>
+
+<div id="out" class="output">Sélectionner un élève pour commencer</div>
 </div>
 
 </div>
@@ -85,14 +169,17 @@ input,button{
 let students = [];
 let selected = null;
 
+/* ===== AJOUT ÉLÈVE ===== */
 function addStudent(){
   let n = document.getElementById("name").value;
   if(!n) return;
+
   students.push(n);
   document.getElementById("name").value = "";
   render();
 }
 
+/* ===== AFFICHAGE LISTE ===== */
 function render(){
   document.getElementById("list").innerHTML =
     students.map((s,i)=>
@@ -100,37 +187,47 @@ function render(){
     ).join("");
 }
 
+/* ===== SÉLECTION ===== */
 function select(i){
   selected = i;
   document.getElementById("title").innerText = students[i];
 }
 
+/* ===== CHECKBOX ===== */
 function checked(){
   return [...document.querySelectorAll("input[type=checkbox]")]
     .filter(c=>c.checked)
     .map(c=>c.value);
 }
 
+/* ===== PPRE ===== */
 function generatePPRE(){
-  if(selected===null) return;
+  if(selected === null) return;
 
   let d = checked();
 
   document.getElementById("out").innerText =
-`PPRE
+`PPRE – PLAN PERSONNALISÉ
 
 Élève : ${students[selected]}
 
-Difficultés :
+Difficultés repérées :
 - ${d.join("\n- ")}
 
-Objectifs :
-- adapter les tâches
-- renforcer les compétences ciblées`;
+Objectifs prioritaires :
+- Adapter les supports
+- Renforcer les automatismes
+- Accompagner la compréhension
+
+Aménagements :
+- guidage renforcé
+- exercices différenciés
+- temps supplémentaire si nécessaire`;
 }
 
+/* ===== FICHE FAMILLE ===== */
 function generateFamily(){
-  if(selected===null) return;
+  if(selected === null) return;
 
   let d = checked();
 
@@ -139,13 +236,15 @@ function generateFamily(){
 
 Élève : ${students[selected]}
 
-Difficultés :
+Points de vigilance :
 - ${d.join("\n- ")}
 
 Conseils :
-- lecture quotidienne
-- reformulation
-- encouragement`;
+- lecture quotidienne 10 min
+- reformulation orale
+- encouragement régulier
+
+Objectif : renforcer la confiance et la régularité des apprentissages`;
 }
 
 </script>
