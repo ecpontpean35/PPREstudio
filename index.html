@@ -7,118 +7,110 @@
 <style>
 body{
   margin:0;
-  font-family: "Segoe UI", Arial;
-  background:#0b1220;
-  color:#e5e7eb;
+  font-family: Arial, sans-serif;
+  background:#f5f7fb;
+  color:#1f2937;
 }
 
-/* ===== LAYOUT GLOBAL ===== */
 .app{
   display:grid;
-  grid-template-columns: 280px 1fr 1fr;
+  grid-template-columns: 300px 1fr 1fr;
   height:100vh;
 }
 
-/* ===== PANELS ===== */
+/* PANELS */
 .panel{
   padding:16px;
   overflow:auto;
+  background:white;
 }
 
 .left{
-  background:#111827;
-  border-right:1px solid #1f2937;
+  border-right:1px solid #e5e7eb;
 }
 
 .center{
-  background:#0f172a;
-  border-right:1px solid #1f2937;
+  border-right:1px solid #e5e7eb;
 }
 
-.right{
-  background:#0b1220;
-}
-
-/* ===== TITRES ===== */
+/* TITRES */
 h2{
   font-size:14px;
   text-transform:uppercase;
-  letter-spacing:1px;
-  color:#9ca3af;
+  color:#6b7280;
   margin-top:0;
 }
 
-/* ===== INPUT ===== */
+/* INPUT */
 input{
   width:100%;
   padding:10px;
+  border:1px solid #d1d5db;
   border-radius:8px;
-  border:none;
   margin-bottom:10px;
-  background:#1f2937;
-  color:white;
 }
 
-/* ===== BOUTONS ===== */
+/* BOUTONS */
 button{
   width:100%;
   padding:10px;
+  margin-top:6px;
   border:none;
   border-radius:8px;
-  margin-top:8px;
   cursor:pointer;
   font-weight:600;
 }
 
-.btn-primary{
+.btn{
   background:#2563eb;
   color:white;
 }
 
-.btn-secondary{
-  background:#374151;
-  color:white;
+.btn:hover{
+  background:#1d4ed8;
 }
 
-button:hover{
-  opacity:0.9;
-}
-
-/* ===== ÉLÈVES ===== */
+/* ÉLÈVES */
 .student{
   padding:10px;
-  margin-top:6px;
-  background:#1f2937;
+  border:1px solid #e5e7eb;
   border-radius:8px;
+  margin-top:6px;
   cursor:pointer;
 }
 
 .student:hover{
-  background:#374151;
+  background:#f3f4f6;
 }
 
-/* ===== CHECKBOX ===== */
-label{
-  display:block;
-  margin:6px 0;
-  font-size:14px;
-}
-
-/* ===== OUTPUT ===== */
-.output{
-  background:#0f172a;
-  padding:12px;
-  border-radius:10px;
-  white-space:pre-line;
-  min-height:200px;
-  border:1px solid #1f2937;
-}
-
-/* ===== HEADER PANEL ===== */
-.header{
-  font-size:13px;
-  color:#9ca3af;
+/* COMPÉTENCES */
+.skill{
+  padding:10px;
+  border:1px solid #e5e7eb;
+  border-radius:8px;
   margin-bottom:10px;
+}
+
+.levels button{
+  width:48%;
+  margin:2px 1%;
+  background:#e5e7eb;
+  color:#111827;
+  font-size:12px;
+}
+
+.levels button.active{
+  background:#2563eb;
+  color:white;
+}
+
+/* OUTPUT */
+.output{
+  white-space:pre-line;
+  background:#f9fafb;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid #e5e7eb;
 }
 </style>
 </head>
@@ -132,34 +124,61 @@ label{
 <h2>Classe</h2>
 
 <input id="name" placeholder="Nom élève">
-<button class="btn-primary" onclick="addStudent()">+ Ajouter élève</button>
+<button class="btn" onclick="addStudent()">+ Ajouter élève</button>
 
 <div id="list"></div>
 </div>
 
 <!-- ================= CENTER ================= -->
 <div class="panel center">
-<h2>Analyse des besoins</h2>
+<h2>Compétences + niveaux</h2>
 
-<div class="header">Compétences observées</div>
+<div class="skill">
+<b>Lecture</b>
+<div class="levels">
+<button onclick="setLevel('lecture',1)">N1</button>
+<button onclick="setLevel('lecture',2)">N2</button>
+<button onclick="setLevel('lecture',3)">N3</button>
+<button onclick="setLevel('lecture',4)">N4</button>
+<button onclick="setLevel('lecture',5)">N5</button>
+<button onclick="setLevel('lecture',6)">N6</button>
+</div>
+</div>
 
-<label><input type="checkbox" value="lecture"> Lecture</label>
-<label><input type="checkbox" value="écriture"> Écriture</label>
-<label><input type="checkbox" value="attention"> Attention</label>
-<label><input type="checkbox" value="vocabulaire"> Vocabulaire</label>
-<label><input type="checkbox" value="oral"> Oral</label>
+<div class="skill">
+<b>Écriture</b>
+<div class="levels">
+<button onclick="setLevel('ecriture',1)">N1</button>
+<button onclick="setLevel('ecriture',2)">N2</button>
+<button onclick="setLevel('ecriture',3)">N3</button>
+<button onclick="setLevel('ecriture',4)">N4</button>
+<button onclick="setLevel('ecriture',5)">N5</button>
+<button onclick="setLevel('ecriture',6)">N6</button>
+</div>
+</div>
 
-<button class="btn-primary" onclick="generatePPRE()">Générer PPRE</button>
-<button class="btn-secondary" onclick="generateFamily()">Fiche famille</button>
+<div class="skill">
+<b>Attention</b>
+<div class="levels">
+<button onclick="setLevel('attention',1)">N1</button>
+<button onclick="setLevel('attention',2)">N2</button>
+<button onclick="setLevel('attention',3)">N3</button>
+<button onclick="setLevel('attention',4)">N4</button>
+<button onclick="setLevel('attention',5)">N5</button>
+<button onclick="setLevel('attention',6)">N6</button>
+</div>
+</div>
+
+<button class="btn" onclick="generate()">Générer PPRE</button>
 </div>
 
 <!-- ================= RIGHT ================= -->
 <div class="panel right">
 <h2>Document PPRE</h2>
 
-<div id="title" class="header">Aucun élève sélectionné</div>
-
-<div id="out" class="output">Sélectionner un élève pour commencer</div>
+<div id="title">Aucun élève</div>
+<br>
+<div id="out" class="output">Sélectionner un élève</div>
 </div>
 
 </div>
@@ -169,17 +188,22 @@ label{
 let students = [];
 let selected = null;
 
-/* ===== AJOUT ÉLÈVE ===== */
+let levels = {
+  lecture: null,
+  ecriture: null,
+  attention: null
+};
+
+/* AJOUT ÉLÈVE */
 function addStudent(){
   let n = document.getElementById("name").value;
   if(!n) return;
-
   students.push(n);
-  document.getElementById("name").value = "";
+  document.getElementById("name").value="";
   render();
 }
 
-/* ===== AFFICHAGE LISTE ===== */
+/* LISTE */
 function render(){
   document.getElementById("list").innerHTML =
     students.map((s,i)=>
@@ -187,64 +211,73 @@ function render(){
     ).join("");
 }
 
-/* ===== SÉLECTION ===== */
+/* SELECTION */
 function select(i){
   selected = i;
   document.getElementById("title").innerText = students[i];
 }
 
-/* ===== CHECKBOX ===== */
-function checked(){
-  return [...document.querySelectorAll("input[type=checkbox]")]
-    .filter(c=>c.checked)
-    .map(c=>c.value);
+/* NIVEAU */
+function setLevel(skill, level){
+  levels[skill] = level;
 }
 
-/* ===== PPRE ===== */
-function generatePPRE(){
+/* MOTEUR SIMPLE */
+function generate(){
+
   if(selected === null) return;
 
-  let d = checked();
+  let text = `PPRE – ${students[selected]}\n\n`;
 
-  document.getElementById("out").innerText =
-`PPRE – PLAN PERSONNALISÉ
+  if(levels.lecture){
+    text += `Lecture (N${levels.lecture})\n`;
+    text += getAction("lecture", levels.lecture) + "\n\n";
+  }
 
-Élève : ${students[selected]}
+  if(levels.ecriture){
+    text += `Écriture (N${levels.ecriture})\n`;
+    text += getAction("ecriture", levels.ecriture) + "\n\n";
+  }
 
-Difficultés repérées :
-- ${d.join("\n- ")}
+  if(levels.attention){
+    text += `Attention (N${levels.attention})\n`;
+    text += getAction("attention", levels.attention) + "\n\n";
+  }
 
-Objectifs prioritaires :
-- Adapter les supports
-- Renforcer les automatismes
-- Accompagner la compréhension
-
-Aménagements :
-- guidage renforcé
-- exercices différenciés
-- temps supplémentaire si nécessaire`;
+  document.getElementById("out").innerText = text;
 }
 
-/* ===== FICHE FAMILLE ===== */
-function generateFamily(){
-  if(selected === null) return;
+/* RÈGLES PÉDAGOGIQUES SIMPLES */
+function getAction(skill, level){
 
-  let d = checked();
+  const map = {
+    lecture: [
+      "repérer des mots isolés",
+      "lire des phrases simples",
+      "comprendre un texte court",
+      "inférer des informations simples",
+      "comprendre l’implicite",
+      "analyser un texte complexe"
+    ],
+    ecriture: [
+      "tracer les lettres",
+      "écrire des mots",
+      "écrire des phrases simples",
+      "structurer un paragraphe",
+      "argumenter",
+      "produire un texte structuré"
+    ],
+    attention: [
+      "se concentrer 5 min",
+      "suivre une consigne simple",
+      "maintenir l’attention",
+      "gérer une tâche longue",
+      "auto-régulation",
+      "autonomie complète"
+    ]
+  };
 
-  document.getElementById("out").innerText =
-`FICHE FAMILLE
-
-Élève : ${students[selected]}
-
-Points de vigilance :
-- ${d.join("\n- ")}
-
-Conseils :
-- lecture quotidienne 10 min
-- reformulation orale
-- encouragement régulier
-
-Objectif : renforcer la confiance et la régularité des apprentissages`;
+  return "Objectif : " + map[skill][level-1];
 }
 
 </script>
