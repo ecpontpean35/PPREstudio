@@ -12,20 +12,13 @@ body {
   color: white;
 }
 
-.top {
-  background: #111827;
-  padding: 10px;
-  font-weight: bold;
-}
-
 .container {
   display: flex;
   height: 100vh;
 }
 
-.left, .center, .right {
+.panel {
   padding: 10px;
-  overflow-y: auto;
 }
 
 .left {
@@ -52,29 +45,23 @@ input, button {
 .student {
   background: #374151;
   padding: 6px;
-  margin: 5px 0;
+  margin-top: 5px;
   cursor: pointer;
-}
-
-.student:hover {
-  background: #4b5563;
 }
 
 .output {
   white-space: pre-line;
-  font-size: 14px;
 }
 </style>
+
 </head>
 
 <body>
 
-<div class="top">PPRE STUDIO — version simple</div>
-
 <div class="container">
 
 <!-- GAUCHE -->
-<div class="left">
+<div class="panel left">
 <h3>Élèves</h3>
 
 <input id="name" placeholder="Nom élève">
@@ -84,7 +71,7 @@ input, button {
 </div>
 
 <!-- CENTRE -->
-<div class="center">
+<div class="panel center">
 <h3>Difficultés</h3>
 
 <label><input type="checkbox" value="lecture"> Lecture</label><br>
@@ -93,37 +80,32 @@ input, button {
 <label><input type="checkbox" value="vocabulaire"> Vocabulaire</label><br>
 <label><input type="checkbox" value="oral"> Oral</label><br>
 
-<button onclick="generate()">Générer PPRE</button>
+<button onclick="generatePPRE()">Générer PPRE</button>
 <button onclick="generateFamily()">Fiche famille</button>
 </div>
 
 <!-- DROITE -->
-<div class="right">
+<div class="panel right">
 <h3 id="title">Aucun élève</h3>
-<div class="output" id="output"></div>
+<div id="output" class="output"></div>
 </div>
 
 </div>
 
 <script>
+
 let students = [];
 let selected = null;
 
-/* =====================
-   AJOUT ÉLÈVE
-===================== */
 function addStudent(){
-  let n = document.getElementById("name").value;
-  if(!n) return;
+  let name = document.getElementById("name").value;
+  if(!name) return;
 
-  students.push({name:n, diff:[]});
+  students.push({name:name});
   document.getElementById("name").value = "";
   render();
 }
 
-/* =====================
-   AFFICHAGE
-===================== */
 function render(){
   let box = document.getElementById("students");
   box.innerHTML = "";
@@ -142,46 +124,26 @@ function select(i){
   document.getElementById("title").innerText = students[i].name;
 }
 
-/* =====================
-   NIVEAU SIMPLE
-===================== */
-function level(diff){
-  let s = 0;
-  if(diff.includes("lecture")) s+=3;
-  if(diff.includes("écriture")) s+=3;
-  if(diff.includes("attention")) s+=2;
-  if(diff.includes("vocabulaire")) s+=2;
-  if(diff.includes("oral")) s+=1;
-
-  if(s<=2) return "N5-N6";
-  if(s<=4) return "N4";
-  if(s<=6) return "N3";
-  if(s<=8) return "N2";
-  return "N1";
+function getChecked(){
+  let checks = document.querySelectorAll("input[type=checkbox]");
+  let res = [];
+  checks.forEach(c=>{
+    if(c.checked) res.push(c.value);
+  });
+  return res;
 }
 
-/* =====================
-   PPRE
-===================== */
-function generate(){
-  if(selected===null) return;
+function generatePPRE(){
+  if(selected === null) return;
 
   let s = students[selected];
-  let checks = document.querySelectorAll("input[type=checkbox]");
-  let diff = [];
-
-  checks.forEach(c=>{
-    if(c.checked) diff.push(c.value);
-  });
-
-  s.diff = diff;
-  let lvl = level(diff);
+  let diff = getChecked();
 
   let obj = [];
 
-  if(diff.includes("lecture")) obj.push("Comprendre un texte simple");
+  if(diff.includes("lecture")) obj.push("Comprendre les textes");
   if(diff.includes("écriture")) obj.push("Améliorer l’écriture");
-  if(diff.includes("attention")) obj.push("Maintenir l’attention");
+  if(diff.includes("attention")) obj.push("Rester concentré");
   if(diff.includes("vocabulaire")) obj.push("Enrichir le lexique");
   if(diff.includes("oral")) obj.push("S’exprimer à l’oral");
 
@@ -189,21 +151,16 @@ function generate(){
 `PPRE
 
 Élève : ${s.name}
-Niveau : ${lvl}
 
 Objectifs :
 - ${obj.join("\n- ")}`;
 }
 
-/* =====================
-   FICHE FAMILLE
-===================== */
 function generateFamily(){
-  if(selected===null) return;
+  if(selected === null) return;
 
   let s = students[selected];
-  let diff = s.diff || [];
-  let lvl = level(diff);
+  let diff = getChecked();
 
   document.getElementById("output").innerText =
 `FICHE FAMILLE
@@ -213,14 +170,14 @@ function generateFamily(){
 Difficultés :
 - ${diff.join("\n- ")}
 
-Objectifs :
-- progression en cours (niveau ${lvl})
-
-Conseils maison :
-- lecture régulière
-- encouragement
-- répétition des consignes`;
+Conseils :
+- lecture quotidienne
+- reformulation
+- encouragement`;
 }
+
+render();
+
 </script>
 
 </body>
