@@ -2,91 +2,210 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>PPRE Studio – Import DOCX</title>
+<title>PPRE Studio v12</title>
 
 <style>
 body{
-  font-family:Arial;
   margin:0;
+  font-family:Arial;
   background:#f3f4f6;
 }
 
 .container{
   display:grid;
-  grid-template-columns:300px 1fr;
+  grid-template-columns:320px 360px 1fr;
   height:100vh;
 }
 
+/* PANELS */
 .panel{
-  padding:10px;
-  overflow:auto;
   background:white;
   border-right:1px solid #ddd;
+  padding:10px;
+  overflow:auto;
+}
+
+h3{
+  font-size:13px;
+  margin-top:10px;
+}
+
+.item{
+  padding:6px;
+  border:1px solid #e5e7eb;
+  margin:4px 0;
+  cursor:pointer;
+  border-radius:5px;
+}
+
+.item:hover{
+  background:#dbeafe;
+}
+
+.selected{
+  background:#93c5fd;
+}
+
+/* OUTPUT */
+.output{
+  white-space:pre-wrap;
+  font-size:13px;
+  background:#f9fafb;
+  padding:10px;
+  border:1px solid #e5e7eb;
 }
 
 button{
   width:100%;
-  padding:10px;
-  margin-top:10px;
+  padding:8px;
+  margin-top:6px;
   background:#2563eb;
   color:white;
   border:none;
   cursor:pointer;
 }
 
-pre{
-  white-space:pre-wrap;
-  font-size:13px;
-}
-
-input{
-  width:100%;
-}
 </style>
-
 </head>
 
 <body>
 
 <div class="container">
 
-<!-- LEFT -->
+<!-- ================= ELEVES ================= -->
 <div class="panel">
-<h3>📁 Charger ton référentiel</h3>
+<h3>Élèves</h3>
 
-<p>Importer ton fichier Word (.docx)</p>
+<input id="student" placeholder="Nom élève">
+<button onclick="addStudent()">Ajouter</button>
 
-<input type="file" id="file">
-
-<button onclick="loadFile()">Afficher le contenu</button>
-
+<div id="students"></div>
 </div>
 
-<!-- RIGHT -->
+<!-- ================= REFERENTIEL ================= -->
 <div class="panel">
-<h3>📘 Référentiel affiché</h3>
+<h3>Référentiel Français</h3>
 
-<pre id="out">Aucun fichier chargé</pre>
+<div id="ref"></div>
+</div>
 
+<!-- ================= PPRE ================= -->
+<div class="panel">
+<h3>PPRE</h3>
+
+<button onclick="generate()">Générer PPRE</button>
+
+<div class="output" id="out">Aucun PPRE</div>
 </div>
 
 </div>
 
 <script>
 
-async function loadFile(){
+let students=[];
+let selectedStudent=null;
+let selectedItems=[];
 
-const file = document.getElementById('file').files[0];
+/* ================= ELEVES ================= */
 
-if(!file){
-alert("Choisis un fichier .docx");
+function addStudent(){
+let v=document.getElementById("student").value;
+if(!v) return;
+students.push(v);
+document.getElementById("student").value="";
+renderStudents();
+}
+
+function renderStudents(){
+document.getElementById("students").innerHTML=
+students.map((s,i)=>
+`<div class="item" onclick="selectedStudent=${i}">${s}</div>`
+).join("");
+}
+
+/* ================= REFERENTIEL (STRUCTURE REELLE) ================= */
+
+const referentiel = {
+"Motricité fine":[
+"tenue du crayon",
+"gestes saccadés",
+"coordination œil-main"
+],
+"Posture":[
+"position corporelle",
+"placement de la feuille"
+],
+"Lisibilité":[
+"formation des lettres",
+"espacement",
+"inclinaison"
+],
+"Vitesse":[
+"écriture lente",
+"écriture précipitée"
+],
+"Fatigabilité":[
+"fatigue rapide",
+"douleurs"
+],
+"Organisation spatiale":[
+"organisation de la page",
+"repérage visuel"
+]
+};
+
+/* ================= AFFICHAGE ================= */
+
+function renderRef(){
+let html="";
+for(let cat in referentiel){
+html+=`<h3>${cat}</h3>`;
+referentiel[cat].forEach(item=>{
+html+=`<div class="item" onclick="toggle(this,'${item}')">${item}</div>`;
+});
+}
+document.getElementById("ref").innerHTML=html;
+}
+
+function toggle(el,item){
+if(selectedItems.includes(item)){
+selectedItems = selectedItems.filter(x=>x!==item);
+el.classList.remove("selected");
+}else{
+selectedItems.push(item);
+el.classList.add("selected");
+}
+}
+
+renderRef();
+
+/* ================= PPRE ================= */
+
+function generate(){
+
+if(selectedStudent===null){
+alert("Choisir élève");
 return;
 }
 
-const text = await file.text();
+let name = students[selectedStudent];
 
-document.getElementById("out").innerText =
-"⚠️ Le fichier est chargé mais brut :\n\n" + text;
+let text = "PPRE – " + name + "\n\n";
+
+text += "DIFFICULTÉS :\n";
+selectedItems.forEach(i=>text+="- "+i+"\n");
+
+text += "\nOBJECTIFS :\n";
+selectedItems.forEach(i=>{
+text+="- améliorer " + i + "\n";
+});
+
+text += "\nAIDES :\n";
+selectedItems.forEach(i=>{
+text+="- travail guidé sur " + i + "\n";
+});
+
+document.getElementById("out").innerText=text;
 
 }
 
@@ -94,3 +213,4 @@ document.getElementById("out").innerText =
 
 </body>
 </html>
+
