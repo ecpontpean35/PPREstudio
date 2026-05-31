@@ -1,1 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>PPRE Studio</title>
 
+<style>
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #0f172a;
+  color: white;
+}
+
+.top {
+  background: #111827;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.left, .center, .right {
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.left {
+  width: 25%;
+  background: #111827;
+}
+
+.center {
+  width: 30%;
+  background: #1f2937;
+}
+
+.right {
+  flex: 1;
+  background: #0b1220;
+}
+
+input, button {
+  width: 100%;
+  padding: 6px;
+  margin-top: 5px;
+}
+
+.student {
+  background: #374151;
+  padding: 6px;
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+.student:hover {
+  background: #4b5563;
+}
+
+.output {
+  white-space: pre-line;
+  font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="top">PPRE STUDIO — version simple</div>
+
+<div class="container">
+
+<!-- GAUCHE -->
+<div class="left">
+<h3>Élèves</h3>
+
+<input id="name" placeholder="Nom élève">
+<button onclick="addStudent()">Ajouter</button>
+
+<div id="students"></div>
+</div>
+
+<!-- CENTRE -->
+<div class="center">
+<h3>Difficultés</h3>
+
+<label><input type="checkbox" value="lecture"> Lecture</label><br>
+<label><input type="checkbox" value="écriture"> Écriture</label><br>
+<label><input type="checkbox" value="attention"> Attention</label><br>
+<label><input type="checkbox" value="vocabulaire"> Vocabulaire</label><br>
+<label><input type="checkbox" value="oral"> Oral</label><br>
+
+<button onclick="generate()">Générer PPRE</button>
+<button onclick="generateFamily()">Fiche famille</button>
+</div>
+
+<!-- DROITE -->
+<div class="right">
+<h3 id="title">Aucun élève</h3>
+<div class="output" id="output"></div>
+</div>
+
+</div>
+
+<script>
+let students = [];
+let selected = null;
+
+/* =====================
+   AJOUT ÉLÈVE
+===================== */
+function addStudent(){
+  let n = document.getElementById("name").value;
+  if(!n) return;
+
+  students.push({name:n, diff:[]});
+  document.getElementById("name").value = "";
+  render();
+}
+
+/* =====================
+   AFFICHAGE
+===================== */
+function render(){
+  let box = document.getElementById("students");
+  box.innerHTML = "";
+
+  students.forEach((s,i)=>{
+    box.innerHTML += `
+      <div class="student" onclick="select(${i})">
+        ${s.name}
+      </div>
+    `;
+  });
+}
+
+function select(i){
+  selected = i;
+  document.getElementById("title").innerText = students[i].name;
+}
+
+/* =====================
+   NIVEAU SIMPLE
+===================== */
+function level(diff){
+  let s = 0;
+  if(diff.includes("lecture")) s+=3;
+  if(diff.includes("écriture")) s+=3;
+  if(diff.includes("attention")) s+=2;
+  if(diff.includes("vocabulaire")) s+=2;
+  if(diff.includes("oral")) s+=1;
+
+  if(s<=2) return "N5-N6";
+  if(s<=4) return "N4";
+  if(s<=6) return "N3";
+  if(s<=8) return "N2";
+  return "N1";
+}
+
+/* =====================
+   PPRE
+===================== */
+function generate(){
+  if(selected===null) return;
+
+  let s = students[selected];
+  let checks = document.querySelectorAll("input[type=checkbox]");
+  let diff = [];
+
+  checks.forEach(c=>{
+    if(c.checked) diff.push(c.value);
+  });
+
+  s.diff = diff;
+  let lvl = level(diff);
+
+  let obj = [];
+
+  if(diff.includes("lecture")) obj.push("Comprendre un texte simple");
+  if(diff.includes("écriture")) obj.push("Améliorer l’écriture");
+  if(diff.includes("attention")) obj.push("Maintenir l’attention");
+  if(diff.includes("vocabulaire")) obj.push("Enrichir le lexique");
+  if(diff.includes("oral")) obj.push("S’exprimer à l’oral");
+
+  document.getElementById("output").innerText =
+`PPRE
+
+Élève : ${s.name}
+Niveau : ${lvl}
+
+Objectifs :
+- ${obj.join("\n- ")}`;
+}
+
+/* =====================
+   FICHE FAMILLE
+===================== */
+function generateFamily(){
+  if(selected===null) return;
+
+  let s = students[selected];
+  let diff = s.diff || [];
+  let lvl = level(diff);
+
+  document.getElementById("output").innerText =
+`FICHE FAMILLE
+
+Élève : ${s.name}
+
+Difficultés :
+- ${diff.join("\n- ")}
+
+Objectifs :
+- progression en cours (niveau ${lvl})
+
+Conseils maison :
+- lecture régulière
+- encouragement
+- répétition des consignes`;
+}
+</script>
+
+</body>
+</html>
