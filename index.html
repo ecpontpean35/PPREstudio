@@ -2,10 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>PPRE Studio v8 – Référentiel</title>
+<title>PPRE Studio v9 – Référentiel complet</title>
 
 <style>
-
 body{
   margin:0;
   font-family:Arial;
@@ -14,11 +13,10 @@ body{
 
 .app{
   display:grid;
-  grid-template-columns:280px 380px 1fr;
+  grid-template-columns:320px 420px 1fr;
   height:100vh;
 }
 
-/* PANELS */
 .panel{
   background:white;
   border-right:1px solid #e5e7eb;
@@ -28,20 +26,18 @@ body{
 
 h2{
   font-size:12px;
-  text-transform:uppercase;
   color:#6b7280;
+  text-transform:uppercase;
 }
 
-/* INPUT */
 input, select{
   width:100%;
   padding:8px;
-  margin:4px 0;
+  margin:6px 0;
   border:1px solid #d1d5db;
   border-radius:6px;
 }
 
-/* BUTTON */
 button{
   width:100%;
   padding:8px;
@@ -54,41 +50,31 @@ button{
 .primary{background:#2563eb;color:white;}
 .secondary{background:#e5e7eb;}
 
-/* TREE */
-.tree details{
-  margin:6px 0;
-  padding-left:6px;
-}
-
-.tree summary{
+.student{
+  padding:6px;
+  border:1px solid #e5e7eb;
+  margin-top:4px;
   cursor:pointer;
-  font-weight:bold;
-  font-size:13px;
 }
 
-.item{
+.student.active{
+  background:#dbeafe;
+}
+
+.tree-item{
+  font-size:12px;
   margin:4px 0;
-  padding:4px;
-  border:1px solid #e5e7eb;
-  border-radius:6px;
-  font-size:12px;
+  white-space:pre-wrap;
+  border-bottom:1px dashed #eee;
+  padding-bottom:4px;
 }
 
-/* CHECKBOX */
-label{
-  display:block;
-  font-size:12px;
-  margin:2px 0;
-}
-
-/* OUTPUT */
 .output{
-  white-space:pre-line;
+  white-space:pre-wrap;
   font-size:13px;
-  padding:10px;
   background:#f9fafb;
+  padding:10px;
   border:1px solid #e5e7eb;
-  border-radius:6px;
 }
 
 </style>
@@ -100,88 +86,31 @@ label{
 
 <!-- ================= ELEVES ================= -->
 <div class="panel">
-
 <h2>Élèves</h2>
 
 <input id="studentName" placeholder="Nom élève">
 <button class="primary" onclick="addStudent()">Ajouter</button>
 
 <div id="students"></div>
-
 </div>
 
 <!-- ================= REFERENTIEL ================= -->
 <div class="panel">
+<h2>Référentiel complet (brut)</h2>
 
-<h2>Référentiel + Recherche</h2>
+<input placeholder="Recherche..." oninput="filterRef(this.value)">
 
-<input id="search" placeholder="Rechercher un item..." oninput="filterTree()">
-
-<div class="tree" id="tree">
-
-<!-- ===== FRANCAIS ===== -->
-<details open>
-<summary>Français</summary>
-
-<details>
-<summary>Lecture – Fluence</summary>
-
-<div class="item" data-text="lecture lente fluence">
-<label><input type="checkbox" onchange="selectItem(this,'lecture lente')"> lecture lente</label>
-</div>
-
-<div class="item" data-text="décodage hésitant">
-<label><input type="checkbox" onchange="selectItem(this,'décodage hésitant')"> décodage hésitant</label>
-</div>
-
-</details>
-
-<details>
-<summary>Compréhension</summary>
-
-<div class="item" data-text="compréhension implicite fragile">
-<label><input type="checkbox" onchange="selectItem(this,'compréhension implicite fragile')"> compréhension implicite fragile</label>
-</div>
-
-<div class="item" data-text="repérage informations">
-<label><input type="checkbox" onchange="selectItem(this,'repérage informations')"> repérage des informations</label>
-</div>
-
-</details>
-
-</details>
-
-<!-- ===== MATHS ===== -->
-<details open>
-<summary>Maths</summary>
-
-<details>
-<summary>Calcul</summary>
-
-<div class="item" data-text="calcul lent">
-<label><input type="checkbox" onchange="selectItem(this,'calcul lent')"> calcul lent</label>
-</div>
-
-<div class="item" data-text="erreurs de procédure">
-<label><input type="checkbox" onchange="selectItem(this,'erreurs de procédure')"> erreurs de procédure</label>
-</div>
-
-</details>
-
-</details>
-
-</div>
+<div id="ref"></div>
 
 </div>
 
 <!-- ================= PPRE ================= -->
 <div class="panel">
-
 <h2>PPRE</h2>
 
-<button class="primary" onclick="generate()">Générer PPRE</button>
+<button class="primary" onclick="generate()">Générer</button>
 
-<div class="output" id="output">Aucun PPRE.</div>
+<div id="out" class="output">Aucun document.</div>
 
 </div>
 
@@ -189,12 +118,10 @@ label{
 
 <script>
 
-let students=[];
-let selectedStudent=null;
-
-let selectedItems=[];
-
 /* ================= ELEVES ================= */
+
+let students=[];
+let selected=null;
 
 function addStudent(){
 let n=document.getElementById("studentName").value;
@@ -207,118 +134,57 @@ renderStudents();
 function renderStudents(){
 document.getElementById("students").innerHTML=
 students.map((s,i)=>
-`<div onclick="selectedStudent=${i}" style="padding:6px;border:1px solid #ddd;margin-top:4px;cursor:pointer">${s}</div>`
+`<div class="student ${selected===i?'active':''}" onclick="selected=${i};renderStudents()">${s}</div>`
 ).join("");
 }
 
-/* ================= ITEMS ================= */
+/* ================= REFERENTIEL COMPLET ================= */
 
-function selectItem(el,name){
+const REFERENTIEL = `{{FULL_DATA}}`;
 
-if(el.checked){
-selectedItems.push(name);
-}else{
-selectedItems = selectedItems.filter(x=>x!==name);
+/* injection massive du document */
+const RAW = REFERENTIEL;
+
+/* affichage simple + filtrage */
+function renderRef(data){
+document.getElementById("ref").innerHTML =
+data.split("\n").map(l=>`<div class="tree-item">${l}</div>`).join("");
 }
 
+renderRef(RAW);
+
+/* filtre */
+function filterRef(q){
+let lines = RAW.split("\n").filter(l=>l.toLowerCase().includes(q.toLowerCase()));
+renderRef(lines.join("\n"));
 }
 
-/* ================= RECHERCHE ================= */
-
-function filterTree(){
-
-let q=document.getElementById("search").value.toLowerCase();
-
-document.querySelectorAll(".item").forEach(el=>{
-let txt=el.getAttribute("data-text");
-el.style.display = txt.includes(q) ? "block":"none";
-});
-
-}
-
-/* ================= PPRE ENGINE ================= */
-
-const engine = {
-
-"lecture lente":{
-objectifs:[
-"améliorer la fluidité de lecture",
-"réduire le coût cognitif"
-],
-aides:[
-"lecture guidée répétée",
-"lecture modèle enseignant"
-]
-},
-
-"décodage hésitant":{
-objectifs:[
-"automatiser le décodage",
-"sécuriser la lecture syllabique"
-],
-aides:[
-"travail syllabique",
-"lecture assistée"
-]
-},
-
-"compréhension implicite fragile":{
-objectifs:[
-"développer l’inférence",
-"comprendre l’implicite"
-],
-aides:[
-"questionnement guidé",
-"reformulation orale"
-]
-},
-
-"calcul lent":{
-objectifs:[
-"automatiser les faits numériques",
-"fluidifier les procédures"
-],
-aides:[
-"entraînement répétitif",
-"matériel concret"
-]
-}
-
-};
-
-/* ================= GENERATION ================= */
+/* ================= PPRE ================= */
 
 function generate(){
 
-if(selectedStudent===null){
+if(selected===null){
 alert("Choisir élève");
 return;
 }
 
-let name=students[selectedStudent];
+let name = students[selected];
 
-let text="PPRE – "+name+"\n\n";
+let text = "PPRE – "+name+"\n\n";
 
-text+="DIFFICULTÉS\n";
-selectedItems.forEach(i=>text+="- "+i+"\n");
+text += "=== EXRAIT RÉFÉRENTIEL UTILISÉ ===\n\n";
 
-text+="\nOBJECTIFS\n";
-selectedItems.forEach(i=>{
-if(engine[i]){
-engine[i].objectifs.forEach(o=>text+="- "+o+"\n");
-}
-});
+/* ici on prend un extrait simple (sélection actuelle filtrée) */
+let shown = document.getElementById("ref").innerText;
 
-text+="\nAIDES\n";
-selectedItems.forEach(i=>{
-if(engine[i]){
-engine[i].aides.forEach(a=>text+="- "+a+"\n");
-}
-});
+text += shown.slice(0,4000);
 
-text+="\nVALIDATION ENSEIGNANT\n- Choix des objectifs adaptés\n- Ajustement des aides\n";
+text += "\n\n=== SYNTHÈSE ENSEIGNANT ===\n";
+text += "- Analyse à partir du référentiel complet\n";
+text += "- Sélection des difficultés observées\n";
+text += "- Adaptation des aides pédagogiques\n";
 
-document.getElementById("output").innerText=text;
+document.getElementById("out").innerText = text;
 
 }
 
