@@ -25,14 +25,12 @@ body{
   border-right:1px solid #e5e7eb;
 }
 
-/* TITRES */
 h2{
   font-size:13px;
   color:#6b7280;
   text-transform:uppercase;
 }
 
-/* INPUT */
 input{
   width:100%;
   padding:10px;
@@ -170,9 +168,9 @@ button{
 
 <!-- ================= RESULTAT ================= -->
 <div class="panel">
-<h2>PPRE</h2>
+<h2>PPRE généré</h2>
 
-<div id="title">Aucun élève sélectionné</div>
+<div id="title">Aucun élève</div>
 <br>
 <div id="out" class="output">...</div>
 </div>
@@ -190,7 +188,7 @@ let levels = {
   attention:null
 };
 
-/* AJOUT ÉLÈVE */
+/* ================= ÉLÈVES ================= */
 function addStudent(){
   let n = document.getElementById("name").value;
   if(!n) return;
@@ -200,24 +198,22 @@ function addStudent(){
   render();
 }
 
-/* LISTE */
 function render(){
   document.getElementById("list").innerHTML =
     students.map((s,i)=>
-      `<div class="student ${selected===i?'active':''}" onclick="select(${i})">
+      `<div class="student ${selected===i?'active':''}" onclick="select(i=${i})">
         ${s}
       </div>`
     ).join("");
 }
 
-/* SÉLECTION */
 function select(i){
   selected = i;
   document.getElementById("title").innerText = students[i];
   render();
 }
 
-/* NIVEAUX (CORRIGÉ — PLUS DE BUG 2e DOMAINE) */
+/* ================= NIVEAUX ================= */
 function setLevel(skill, level){
 
   levels[skill] = level;
@@ -225,30 +221,85 @@ function setLevel(skill, level){
   document.querySelectorAll(`[data-skill="${skill}"] button`)
     .forEach((btn, i) => {
       btn.classList.remove("active");
-      if(i === level - 1){
-        btn.classList.add("active");
-      }
+      if(i === level-1) btn.classList.add("active");
     });
 }
 
-/* GÉNÉRATION */
+/* ================= MOTEUR PPRE COMPLET ================= */
+const engine = {
+  lecture: {
+    1: {
+      obj:["Identifier des éléments isolés","Comprendre du vocabulaire simple"],
+      aid:["textes très courts","illustrations","guidage fort"]
+    },
+    2: {
+      obj:["Repérer informations explicites","Comprendre phrases simples"],
+      aid:["surlignage guidé","questions fermées","reformulation"]
+    },
+    3: {
+      obj:["Comprendre texte court","Faire inférences simples"],
+      aid:["lecture accompagnée","questions guidées"]
+    },
+    4: {
+      obj:["Comprendre texte structuré","Relever informations clés"],
+      aid:["lecture autonome guidée","questionnement ciblé"]
+    },
+    5: {
+      obj:["Analyser un texte","Interpréter implicite simple"],
+      aid:["analyse guidée","mise en réseau des idées"]
+    },
+    6: {
+      obj:["Comprendre textes complexes","Argumenter à l’écrit"],
+      aid:["travail autonome","analyse fine"]
+    }
+  },
+
+  ecriture: {
+    1:{obj:["Tracer lettres"],aid:["modèles agrandis","guidage geste"]},
+    2:{obj:["Écrire mots"],aid:["dictée à l’adulte","modèles"]},
+    3:{obj:["Écrire phrases"],aid:["banque de mots","guidage syntaxe"]},
+    4:{obj:["Produire paragraphes"],aid:["plans guidés","structure texte"]},
+    5:{obj:["Structurer texte"],aid:["aide organisation","relecture guidée"]},
+    6:{obj:["Produire texte long"],aid:["autonomie","critique texte"]}
+  },
+
+  attention: {
+    1:{obj:["Maintenir attention courte durée"],aid:["consignes courtes","timer"]},
+    2:{obj:["Suivre consigne simple"],aid:["fractionnement","rappels"]},
+    3:{obj:["Maintenir effort"],aid:["objectifs courts","encouragement"]},
+    4:{obj:["Gérer tâche longue"],aid:["planning visuel"]},
+    5:{obj:["Auto-régulation"],aid:["autonomie guidée"]},
+    6:{obj:["Autonomie complète"],aid:["responsabilisation"]}
+  }
+};
+
+/* ================= GENERATION PPRE ================= */
 function generate(){
 
   if(selected === null) return;
 
-  let s = students[selected];
+  let name = students[selected];
+  let text = `PPRE – ${name}\n\n`;
 
-  let text = `PPRE – ${s}\n\n`;
+  Object.keys(levels).forEach(skill => {
 
-  if(levels.lecture){
-    text += "Lecture : N" + levels.lecture + "\n";
-  }
-  if(levels.ecriture){
-    text += "Écriture : N" + levels.ecriture + "\n";
-  }
-  if(levels.attention){
-    text += "Attention : N" + levels.attention + "\n";
-  }
+    let lvl = levels[skill];
+
+    if(lvl && engine[skill] && engine[skill][lvl]){
+
+      let data = engine[skill][lvl];
+
+      text += "=== " + skill.toUpperCase() + " ===\n\n";
+
+      text += "Objectifs :\n";
+      data.obj.forEach(o => text += "- " + o + "\n");
+
+      text += "\nAides :\n";
+      data.aid.forEach(a => text += "- " + a + "\n");
+
+      text += "\n\n";
+    }
+  });
 
   document.getElementById("out").innerText = text;
 }
