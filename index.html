@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>PPRE Studio Pro</title>
+<title>PPRE Studio Pro+</title>
 
 <style>
 body{
@@ -13,39 +13,40 @@ body{
 
 .app{
   display:grid;
-  grid-template-columns: 300px 1fr 1fr;
+  grid-template-columns: 260px 320px 1fr 1fr;
   height:100vh;
 }
 
 /* PANELS */
 .panel{
-  padding:16px;
+  padding:14px;
   overflow:auto;
   background:white;
   border-right:1px solid #e5e7eb;
 }
 
 h2{
-  font-size:13px;
+  font-size:12px;
   color:#6b7280;
   text-transform:uppercase;
 }
 
+/* INPUT */
 input{
   width:100%;
-  padding:10px;
-  margin-bottom:10px;
+  padding:8px;
+  margin-bottom:8px;
   border:1px solid #d1d5db;
-  border-radius:8px;
+  border-radius:6px;
 }
 
-/* BOUTONS */
+/* BUTTON */
 button{
   width:100%;
-  padding:10px;
-  margin-top:6px;
+  padding:8px;
+  margin-top:5px;
   border:none;
-  border-radius:8px;
+  border-radius:6px;
   cursor:pointer;
   font-weight:600;
 }
@@ -55,12 +56,12 @@ button{
   color:white;
 }
 
-/* ÉLÈVES */
+/* ELEVES */
 .student{
-  padding:10px;
+  padding:8px;
   border:1px solid #e5e7eb;
-  border-radius:8px;
-  margin-top:6px;
+  border-radius:6px;
+  margin-top:5px;
   cursor:pointer;
 }
 
@@ -69,14 +70,14 @@ button{
   border:2px solid #2563eb;
 }
 
-/* COMPÉTENCES */
+/* SKILLS */
 .skill{
-  margin-bottom:16px;
+  margin-bottom:14px;
 }
 
 .skill-title{
   font-weight:600;
-  margin-bottom:6px;
+  margin-bottom:5px;
 }
 
 .levels{
@@ -85,11 +86,10 @@ button{
 }
 
 .levels button{
-  width:32%;
-  margin:2px 1%;
+  width:30%;
+  margin:2px;
   background:#e5e7eb;
-  font-size:12px;
-  border-radius:6px;
+  font-size:11px;
 }
 
 .levels button.active{
@@ -100,12 +100,31 @@ button{
 /* OUTPUT */
 .output{
   white-space:pre-line;
-  padding:10px;
+  padding:8px;
   background:#f9fafb;
   border:1px solid #e5e7eb;
-  border-radius:8px;
+  border-radius:6px;
+  font-size:13px;
 }
 
+/* REFERENCE */
+.ref{
+  font-size:12px;
+  line-height:1.4;
+}
+
+.ref h3{
+  font-size:13px;
+  margin:8px 0 4px 0;
+  color:#111827;
+}
+
+.ref div{
+  margin-bottom:6px;
+  padding:6px;
+  border-left:3px solid #2563eb;
+  background:#f3f4f6;
+}
 </style>
 </head>
 
@@ -118,7 +137,7 @@ button{
 <h2>Classe</h2>
 
 <input id="name" placeholder="Nom élève">
-<button class="btn" onclick="addStudent()">Ajouter élève</button>
+<button class="btn" onclick="addStudent()">Ajouter</button>
 
 <div id="list"></div>
 </div>
@@ -166,9 +185,39 @@ button{
 <button class="btn" onclick="generate()">Générer PPRE</button>
 </div>
 
+<!-- ================= REFERENTIEL ================= -->
+<div class="panel ref">
+<h2>Référentiel N1 → N6</h2>
+
+<h3>Lecture</h3>
+<div>N1 : repérage isolé</div>
+<div>N2 : phrases simples</div>
+<div>N3 : compréhension guidée</div>
+<div>N4 : texte structuré</div>
+<div>N5 : inférences</div>
+<div>N6 : analyse + autonomie</div>
+
+<h3>Écriture</h3>
+<div>N1 : geste graphique</div>
+<div>N2 : mots</div>
+<div>N3 : phrases</div>
+<div>N4 : paragraphes</div>
+<div>N5 : structuration</div>
+<div>N6 : production autonome</div>
+
+<h3>Attention</h3>
+<div>N1 : très court</div>
+<div>N2 : consigne simple</div>
+<div>N3 : maintien guidé</div>
+<div>N4 : tâche longue</div>
+<div>N5 : autonomie</div>
+<div>N6 : auto-régulation</div>
+
+</div>
+
 <!-- ================= RESULTAT ================= -->
 <div class="panel">
-<h2>PPRE généré</h2>
+<h2>PPRE</h2>
 
 <div id="title">Aucun élève</div>
 <br>
@@ -179,129 +228,61 @@ button{
 
 <script>
 
-let students = [];
-let selected = null;
+let students=[];
+let selected=null;
 
-let levels = {
-  lecture:null,
-  ecriture:null,
-  attention:null
+let levels={
+ lecture:null,
+ ecriture:null,
+ attention:null
 };
 
-/* ================= ÉLÈVES ================= */
 function addStudent(){
-  let n = document.getElementById("name").value;
-  if(!n) return;
-
-  students.push(n);
-  document.getElementById("name").value="";
-  render();
+ let n=document.getElementById("name").value;
+ if(!n) return;
+ students.push(n);
+ document.getElementById("name").value="";
+ render();
 }
 
 function render(){
-  document.getElementById("list").innerHTML =
-    students.map((s,i)=>
-      `<div class="student ${selected===i?'active':''}" onclick="select(i=${i})">
-        ${s}
-      </div>`
-    ).join("");
+ document.getElementById("list").innerHTML=
+ students.map((s,i)=>
+ `<div class="student ${selected===i?'active':''}" onclick="select(${i})">${s}</div>`
+ ).join("");
 }
 
 function select(i){
-  selected = i;
-  document.getElementById("title").innerText = students[i];
-  render();
+ selected=i;
+ document.getElementById("title").innerText=students[i];
+ render();
 }
 
-/* ================= NIVEAUX ================= */
-function setLevel(skill, level){
+function setLevel(skill,level){
+ levels[skill]=level;
 
-  levels[skill] = level;
-
-  document.querySelectorAll(`[data-skill="${skill}"] button`)
-    .forEach((btn, i) => {
-      btn.classList.remove("active");
-      if(i === level-1) btn.classList.add("active");
-    });
+ document.querySelectorAll(`[data-skill="${skill}"] button`)
+ .forEach((b,i)=>{
+ b.classList.remove("active");
+ if(i===level-1) b.classList.add("active");
+ });
 }
 
-/* ================= MOTEUR PPRE COMPLET ================= */
-const engine = {
-  lecture: {
-    1: {
-      obj:["Identifier des éléments isolés","Comprendre du vocabulaire simple"],
-      aid:["textes très courts","illustrations","guidage fort"]
-    },
-    2: {
-      obj:["Repérer informations explicites","Comprendre phrases simples"],
-      aid:["surlignage guidé","questions fermées","reformulation"]
-    },
-    3: {
-      obj:["Comprendre texte court","Faire inférences simples"],
-      aid:["lecture accompagnée","questions guidées"]
-    },
-    4: {
-      obj:["Comprendre texte structuré","Relever informations clés"],
-      aid:["lecture autonome guidée","questionnement ciblé"]
-    },
-    5: {
-      obj:["Analyser un texte","Interpréter implicite simple"],
-      aid:["analyse guidée","mise en réseau des idées"]
-    },
-    6: {
-      obj:["Comprendre textes complexes","Argumenter à l’écrit"],
-      aid:["travail autonome","analyse fine"]
-    }
-  },
-
-  ecriture: {
-    1:{obj:["Tracer lettres"],aid:["modèles agrandis","guidage geste"]},
-    2:{obj:["Écrire mots"],aid:["dictée à l’adulte","modèles"]},
-    3:{obj:["Écrire phrases"],aid:["banque de mots","guidage syntaxe"]},
-    4:{obj:["Produire paragraphes"],aid:["plans guidés","structure texte"]},
-    5:{obj:["Structurer texte"],aid:["aide organisation","relecture guidée"]},
-    6:{obj:["Produire texte long"],aid:["autonomie","critique texte"]}
-  },
-
-  attention: {
-    1:{obj:["Maintenir attention courte durée"],aid:["consignes courtes","timer"]},
-    2:{obj:["Suivre consigne simple"],aid:["fractionnement","rappels"]},
-    3:{obj:["Maintenir effort"],aid:["objectifs courts","encouragement"]},
-    4:{obj:["Gérer tâche longue"],aid:["planning visuel"]},
-    5:{obj:["Auto-régulation"],aid:["autonomie guidée"]},
-    6:{obj:["Autonomie complète"],aid:["responsabilisation"]}
-  }
-};
-
-/* ================= GENERATION PPRE ================= */
 function generate(){
+ if(selected===null) return;
 
-  if(selected === null) return;
+ let name=students[selected];
 
-  let name = students[selected];
-  let text = `PPRE – ${name}\n\n`;
+ let text="PPRE – "+name+"\n\n";
 
-  Object.keys(levels).forEach(skill => {
+ Object.keys(levels).forEach(skill=>{
+ let lvl=levels[skill];
+ if(lvl){
+ text+=skill.toUpperCase()+" : N"+lvl+"\n";
+ }
+ });
 
-    let lvl = levels[skill];
-
-    if(lvl && engine[skill] && engine[skill][lvl]){
-
-      let data = engine[skill][lvl];
-
-      text += "=== " + skill.toUpperCase() + " ===\n\n";
-
-      text += "Objectifs :\n";
-      data.obj.forEach(o => text += "- " + o + "\n");
-
-      text += "\nAides :\n";
-      data.aid.forEach(a => text += "- " + a + "\n");
-
-      text += "\n\n";
-    }
-  });
-
-  document.getElementById("out").innerText = text;
+ document.getElementById("out").innerText=text;
 }
 
 </script>
