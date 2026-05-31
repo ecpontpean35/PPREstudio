@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>PPRE Studio v9 – Référentiel complet</title>
+<title>PPRE Studio v9 FIX</title>
 
 <style>
 body{
@@ -13,70 +13,36 @@ body{
 
 .app{
   display:grid;
-  grid-template-columns:320px 420px 1fr;
+  grid-template-columns:300px 1fr;
   height:100vh;
 }
 
 .panel{
   background:white;
-  border-right:1px solid #e5e7eb;
-  padding:12px;
+  border-right:1px solid #ddd;
+  padding:10px;
   overflow:auto;
 }
 
-h2{
-  font-size:12px;
-  color:#6b7280;
-  text-transform:uppercase;
-}
-
-input, select{
+textarea{
   width:100%;
-  padding:8px;
-  margin:6px 0;
-  border:1px solid #d1d5db;
-  border-radius:6px;
+  height:300px;
 }
 
 button{
   width:100%;
   padding:8px;
-  margin-top:6px;
+  margin-top:8px;
+  background:#2563eb;
+  color:white;
   border:none;
-  border-radius:6px;
   cursor:pointer;
 }
 
-.primary{background:#2563eb;color:white;}
-.secondary{background:#e5e7eb;}
-
-.student{
-  padding:6px;
-  border:1px solid #e5e7eb;
-  margin-top:4px;
-  cursor:pointer;
-}
-
-.student.active{
-  background:#dbeafe;
-}
-
-.tree-item{
+pre{
+  white-space:pre-wrap;
   font-size:12px;
-  margin:4px 0;
-  white-space:pre-wrap;
-  border-bottom:1px dashed #eee;
-  padding-bottom:4px;
 }
-
-.output{
-  white-space:pre-wrap;
-  font-size:13px;
-  background:#f9fafb;
-  padding:10px;
-  border:1px solid #e5e7eb;
-}
-
 </style>
 </head>
 
@@ -84,33 +50,21 @@ button{
 
 <div class="app">
 
-<!-- ================= ELEVES ================= -->
+<!-- LEFT -->
 <div class="panel">
-<h2>Élèves</h2>
+<h3>📥 Coller référentiel</h3>
 
-<input id="studentName" placeholder="Nom élève">
-<button class="primary" onclick="addStudent()">Ajouter</button>
+<textarea id="input"></textarea>
 
-<div id="students"></div>
-</div>
-
-<!-- ================= REFERENTIEL ================= -->
-<div class="panel">
-<h2>Référentiel complet (brut)</h2>
-
-<input placeholder="Recherche..." oninput="filterRef(this.value)">
-
-<div id="ref"></div>
+<button onclick="load()">Charger le référentiel</button>
 
 </div>
 
-<!-- ================= PPRE ================= -->
+<!-- RIGHT -->
 <div class="panel">
-<h2>PPRE</h2>
+<h3>📘 Affichage</h3>
 
-<button class="primary" onclick="generate()">Générer</button>
-
-<div id="out" class="output">Aucun document.</div>
+<pre id="out">Aucun contenu chargé</pre>
 
 </div>
 
@@ -118,74 +72,9 @@ button{
 
 <script>
 
-/* ================= ELEVES ================= */
-
-let students=[];
-let selected=null;
-
-function addStudent(){
-let n=document.getElementById("studentName").value;
-if(!n) return;
-students.push(n);
-document.getElementById("studentName").value="";
-renderStudents();
-}
-
-function renderStudents(){
-document.getElementById("students").innerHTML=
-students.map((s,i)=>
-`<div class="student ${selected===i?'active':''}" onclick="selected=${i};renderStudents()">${s}</div>`
-).join("");
-}
-
-/* ================= REFERENTIEL COMPLET ================= */
-
-const REFERENTIEL = `{{FULL_DATA}}`;
-
-/* injection massive du document */
-const RAW = REFERENTIEL;
-
-/* affichage simple + filtrage */
-function renderRef(data){
-document.getElementById("ref").innerHTML =
-data.split("\n").map(l=>`<div class="tree-item">${l}</div>`).join("");
-}
-
-renderRef(RAW);
-
-/* filtre */
-function filterRef(q){
-let lines = RAW.split("\n").filter(l=>l.toLowerCase().includes(q.toLowerCase()));
-renderRef(lines.join("\n"));
-}
-
-/* ================= PPRE ================= */
-
-function generate(){
-
-if(selected===null){
-alert("Choisir élève");
-return;
-}
-
-let name = students[selected];
-
-let text = "PPRE – "+name+"\n\n";
-
-text += "=== EXRAIT RÉFÉRENTIEL UTILISÉ ===\n\n";
-
-/* ici on prend un extrait simple (sélection actuelle filtrée) */
-let shown = document.getElementById("ref").innerText;
-
-text += shown.slice(0,4000);
-
-text += "\n\n=== SYNTHÈSE ENSEIGNANT ===\n";
-text += "- Analyse à partir du référentiel complet\n";
-text += "- Sélection des difficultés observées\n";
-text += "- Adaptation des aides pédagogiques\n";
-
-document.getElementById("out").innerText = text;
-
+function load(){
+let text=document.getElementById("input").value;
+document.getElementById("out").innerText=text;
 }
 
 </script>
