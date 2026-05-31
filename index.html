@@ -2,9 +2,10 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>PPRE Studio – Assistant Inspection</title>
+<title>PPRE Studio v8 – Référentiel</title>
 
 <style>
+
 body{
   margin:0;
   font-family:Arial;
@@ -13,7 +14,7 @@ body{
 
 .app{
   display:grid;
-  grid-template-columns:260px 360px 1fr 1fr;
+  grid-template-columns:280px 380px 1fr;
   height:100vh;
 }
 
@@ -21,78 +22,73 @@ body{
 .panel{
   background:white;
   border-right:1px solid #e5e7eb;
-  padding:14px;
+  padding:12px;
   overflow:auto;
 }
 
 h2{
   font-size:12px;
-  color:#6b7280;
   text-transform:uppercase;
+  color:#6b7280;
 }
 
 /* INPUT */
-input{
+input, select{
   width:100%;
   padding:8px;
+  margin:4px 0;
   border:1px solid #d1d5db;
   border-radius:6px;
-  margin-bottom:8px;
 }
 
+/* BUTTON */
 button{
   width:100%;
   padding:8px;
+  margin-top:6px;
   border:none;
   border-radius:6px;
   cursor:pointer;
-  margin-top:6px;
 }
 
-.primary{
-  background:#2563eb;
-  color:white;
+.primary{background:#2563eb;color:white;}
+.secondary{background:#e5e7eb;}
+
+/* TREE */
+.tree details{
+  margin:6px 0;
+  padding-left:6px;
 }
 
-.secondary{
-  background:#e5e7eb;
-}
-
-/* ELEVE */
-.student{
-  padding:8px;
-  border:1px solid #e5e7eb;
-  margin-top:6px;
-  border-radius:6px;
+.tree summary{
   cursor:pointer;
-}
-
-.student.active{
-  background:#dbeafe;
-  border:2px solid #2563eb;
-}
-
-/* BLOCS */
-.block-title{
   font-weight:bold;
-  margin:10px 0 6px;
+  font-size:13px;
+}
+
+.item{
+  margin:4px 0;
+  padding:4px;
+  border:1px solid #e5e7eb;
+  border-radius:6px;
+  font-size:12px;
 }
 
 /* CHECKBOX */
 label{
   display:block;
-  font-size:13px;
-  margin:4px 0;
+  font-size:12px;
+  margin:2px 0;
 }
 
 /* OUTPUT */
 .output{
   white-space:pre-line;
+  font-size:13px;
   padding:10px;
   background:#f9fafb;
   border:1px solid #e5e7eb;
   border-radius:6px;
-  font-size:13px;
 }
 
 </style>
@@ -107,68 +103,85 @@ label{
 
 <h2>Élèves</h2>
 
-<input id="name" placeholder="Nom élève">
+<input id="studentName" placeholder="Nom élève">
 <button class="primary" onclick="addStudent()">Ajouter</button>
 
 <div id="students"></div>
 
 </div>
 
-<!-- ================= ANALYSE ================= -->
+<!-- ================= REFERENTIEL ================= -->
 <div class="panel">
 
-<h2>Analyse</h2>
+<h2>Référentiel + Recherche</h2>
 
-<div class="block-title">Compétences</div>
+<input id="search" placeholder="Rechercher un item..." oninput="filterTree()">
 
-<select id="skill" onchange="loadLevelOptions()">
-<option value="">-- choisir --</option>
-<option value="lecture">Lecture</option>
-<option value="comprehension">Compréhension</option>
-<option value="ecriture">Écriture</option>
-<option value="maths">Maths</option>
-<option value="attention">Attention</option>
-</select>
+<div class="tree" id="tree">
 
-<div class="block-title">Niveau estimé</div>
+<!-- ===== FRANCAIS ===== -->
+<details open>
+<summary>Français</summary>
 
-<select id="level" onchange="showSuggestions()">
-<option value="">-- niveau --</option>
-<option value="1">N1</option>
-<option value="2">N2</option>
-<option value="3">N3</option>
-<option value="4">N4</option>
-<option value="5">N5</option>
-<option value="6">N6</option>
-</select>
+<details>
+<summary>Lecture – Fluence</summary>
+
+<div class="item" data-text="lecture lente fluence">
+<label><input type="checkbox" onchange="selectItem(this,'lecture lente')"> lecture lente</label>
+</div>
+
+<div class="item" data-text="décodage hésitant">
+<label><input type="checkbox" onchange="selectItem(this,'décodage hésitant')"> décodage hésitant</label>
+</div>
+
+</details>
+
+<details>
+<summary>Compréhension</summary>
+
+<div class="item" data-text="compréhension implicite fragile">
+<label><input type="checkbox" onchange="selectItem(this,'compréhension implicite fragile')"> compréhension implicite fragile</label>
+</div>
+
+<div class="item" data-text="repérage informations">
+<label><input type="checkbox" onchange="selectItem(this,'repérage informations')"> repérage des informations</label>
+</div>
+
+</details>
+
+</details>
+
+<!-- ===== MATHS ===== -->
+<details open>
+<summary>Maths</summary>
+
+<details>
+<summary>Calcul</summary>
+
+<div class="item" data-text="calcul lent">
+<label><input type="checkbox" onchange="selectItem(this,'calcul lent')"> calcul lent</label>
+</div>
+
+<div class="item" data-text="erreurs de procédure">
+<label><input type="checkbox" onchange="selectItem(this,'erreurs de procédure')"> erreurs de procédure</label>
+</div>
+
+</details>
+
+</details>
 
 </div>
 
-<!-- ================= SELECTION PROF ================= -->
-<div class="panel">
-
-<h2>Décision enseignant</h2>
-
-<div class="block-title">Difficultés observées</div>
-<div id="difficulties"></div>
-
-<div class="block-title">Objectifs retenus</div>
-<div id="objectives"></div>
-
-<div class="block-title">Aides choisies</div>
-<div id="aids"></div>
-
-<button class="primary" onclick="generate()">Générer PPRE</button>
-<button class="secondary" onclick="generateFamily()">Fiche famille</button>
-
 </div>
 
-<!-- ================= OUTPUT ================= -->
+<!-- ================= PPRE ================= -->
 <div class="panel">
 
 <h2>PPRE</h2>
 
-<div id="output" class="output">Aucun document.</div>
+<button class="primary" onclick="generate()">Générer PPRE</button>
+
+<div class="output" id="output">Aucun PPRE.</div>
 
 </div>
 
@@ -177,150 +190,133 @@ label{
 <script>
 
 let students=[];
-let selected=null;
+let selectedStudent=null;
 
-const base = {
+let selectedItems=[];
 
-lecture:{
-1:{d:["décodage fragile","reconnaissance mots"],o:["identifier mots","lire syllabes"],a:["lecture guidée"]},
-2:{d:["lecture lente","compréhension simple"],o:["lire phrases simples"],a:["guidage oral"]},
-3:{d:["compréhension partielle"],o:["comprendre texte court"],a:["questionnement guidé"]}
-},
-
-comprehension:{
-1:{d:["non repérage infos"],o:["repérer informations simples"],a:["lecture guidée"]},
-2:{d:["compréhension fragile"],o:["comprendre l’essentiel"],a:["reformulation"]}
-},
-
-ecriture:{
-1:{d:["tracé difficile"],o:["écrire mots"],a:["modèle"]},
-2:{d:["phrases incomplètes"],o:["écrire phrases"],a:["banque de mots"]}
-},
-
-maths:{
-1:{d:["numération fragile"],o:["reconnaître nombres"],a:["manipulation"]},
-2:{d:["calcul lent"],o:["calcul simple"],a:["support visuel"]}
-},
-
-attention:{
-1:{d:["difficulté concentration"],o:["maintenir attention"],a:["consignes courtes"]},
-2:{d:["décrochage rapide"],o:["terminer tâche"],a:["fractionnement"]}
-}
-
-};
-
-let currentSkill="";
-let currentLevel="";
-let selectedData={
-d:[],
-o:[],
-a:[]
-};
-
-/* ================= ELEVE ================= */
+/* ================= ELEVES ================= */
 
 function addStudent(){
-let n=document.getElementById("name").value;
+let n=document.getElementById("studentName").value;
 if(!n) return;
 students.push(n);
-document.getElementById("name").value="";
-render();
+document.getElementById("studentName").value="";
+renderStudents();
 }
 
-function render(){
+function renderStudents(){
 document.getElementById("students").innerHTML=
 students.map((s,i)=>
-`<div class="student ${selected===i?'active':''}" onclick="select(${i})">${s}</div>`
+`<div onclick="selectedStudent=${i}" style="padding:6px;border:1px solid #ddd;margin-top:4px;cursor:pointer">${s}</div>`
 ).join("");
 }
 
-function select(i){
-selected=i;
-render();
+/* ================= ITEMS ================= */
+
+function selectItem(el,name){
+
+if(el.checked){
+selectedItems.push(name);
+}else{
+selectedItems = selectedItems.filter(x=>x!==name);
 }
-
-/* ================= ANALYSE ================= */
-
-function loadLevelOptions(){
-currentSkill=document.getElementById("skill").value;
-showSuggestions();
-}
-
-function showSuggestions(){
-
-currentLevel=document.getElementById("level").value;
-
-if(!currentSkill || !currentLevel) return;
-
-let data = base[currentSkill]?.[currentLevel];
-
-if(!data) return;
-
-/* affichage propositions */
-document.getElementById("difficulties").innerHTML =
-data.d.map(x=>`<label><input type="checkbox" value="${x}" onchange="update()"> ${x}</label>`).join("");
-
-document.getElementById("objectives").innerHTML =
-data.o.map(x=>`<label><input type="checkbox" value="${x}" onchange="update()"> ${x}</label>`).join("");
-
-document.getElementById("aids").innerHTML =
-data.a.map(x=>`<label><input type="checkbox" value="${x}" onchange="update()"> ${x}</label>`).join("");
 
 }
 
-/* ================= SELECTION ================= */
+/* ================= RECHERCHE ================= */
 
-function update(){
+function filterTree(){
 
-selectedData={d:[],o:[],a:[]};
+let q=document.getElementById("search").value.toLowerCase();
 
-document.querySelectorAll("#difficulties input:checked").forEach(i=>selectedData.d.push(i.value));
-document.querySelectorAll("#objectives input:checked").forEach(i=>selectedData.o.push(i.value));
-document.querySelectorAll("#aids input:checked").forEach(i=>selectedData.a.push(i.value));
+document.querySelectorAll(".item").forEach(el=>{
+let txt=el.getAttribute("data-text");
+el.style.display = txt.includes(q) ? "block":"none";
+});
 
 }
 
-/* ================= PPRE ================= */
+/* ================= PPRE ENGINE ================= */
+
+const engine = {
+
+"lecture lente":{
+objectifs:[
+"améliorer la fluidité de lecture",
+"réduire le coût cognitif"
+],
+aides:[
+"lecture guidée répétée",
+"lecture modèle enseignant"
+]
+},
+
+"décodage hésitant":{
+objectifs:[
+"automatiser le décodage",
+"sécuriser la lecture syllabique"
+],
+aides:[
+"travail syllabique",
+"lecture assistée"
+]
+},
+
+"compréhension implicite fragile":{
+objectifs:[
+"développer l’inférence",
+"comprendre l’implicite"
+],
+aides:[
+"questionnement guidé",
+"reformulation orale"
+]
+},
+
+"calcul lent":{
+objectifs:[
+"automatiser les faits numériques",
+"fluidifier les procédures"
+],
+aides:[
+"entraînement répétitif",
+"matériel concret"
+]
+}
+
+};
+
+/* ================= GENERATION ================= */
 
 function generate(){
 
-if(selected===null){
-alert("Choisir un élève");
+if(selectedStudent===null){
+alert("Choisir élève");
 return;
 }
 
-let name=students[selected];
+let name=students[selectedStudent];
 
 let text="PPRE – "+name+"\n\n";
 
 text+="DIFFICULTÉS\n";
-selectedData.d.forEach(x=>text+="- "+x+"\n");
+selectedItems.forEach(i=>text+="- "+i+"\n");
 
 text+="\nOBJECTIFS\n";
-selectedData.o.forEach(x=>text+="- "+x+"\n");
+selectedItems.forEach(i=>{
+if(engine[i]){
+engine[i].objectifs.forEach(o=>text+="- "+o+"\n");
+}
+});
 
 text+="\nAIDES\n";
-selectedData.a.forEach(x=>text+="- "+x+"\n");
-
-text+="\nSYNTHÈSE\n";
-text+="- Accompagnement ciblé selon analyse enseignant\n";
-
-document.getElementById("output").innerText=text;
-
+selectedItems.forEach(i=>{
+if(engine[i]){
+engine[i].aides.forEach(a=>text+="- "+a+"\n");
 }
+});
 
-/* ================= FAMILLE ================= */
-
-function generateFamily(){
-
-let text="FICHE FAMILLE\n\n";
-
-text+="Votre enfant bénéficie d’un accompagnement personnalisé.\n\n";
-
-text+="Objectifs travaillés :\n";
-selectedData.o.forEach(x=>text+="- "+x+"\n");
-
-text+="\nConseils :\n- Travail régulier\n- Lecture quotidienne\n- Encouragements\n";
+text+="\nVALIDATION ENSEIGNANT\n- Choix des objectifs adaptés\n- Ajustement des aides\n";
 
 document.getElementById("output").innerText=text;
 
