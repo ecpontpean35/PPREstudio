@@ -1,1 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>PPRE Studio</title>
+</head>
 
+<body>
+
+<h1>PPRE STUDIO OK</h1>
+
+<input id="name" placeholder="Nom élève">
+<button onclick="add()">Ajouter</button>
+
+<div id="list"></div>
+
+<br>
+
+<label><input type="checkbox" value="lecture"> Lecture</label>
+<label><input type="checkbox" value="écriture"> Écriture</label>
+
+<button onclick="gen()">Générer</button>
+
+<pre id="out"></pre>
+
+<script>
+
+let students = [];
+let selected = null;
+
+function add(){
+  let n = document.getElementById("name").value;
+  students.push(n);
+  render();
+}
+
+function render(){
+  document.getElementById("list").innerHTML =
+    students.map((s,i)=>
+      `<div onclick="selected=${i}">${s}</div>`
+    ).join("");
+}
+
+function gen(){
+  let d = [...document.querySelectorAll("input[type=checkbox]")]
+    .filter(c=>c.checked)
+    .map(c=>c.value);
+
+  document.getElementById("out").innerText =
+`Élève: ${students[selected]}
+
+Difficultés:
+- ${d.join("\n- ")}`;
+}
+
+</script>
+
+</body>
+</html>
