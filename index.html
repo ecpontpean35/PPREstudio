@@ -1,26 +1,51 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <h1>VERSION TEST OK 123</h1>
 <head>
 <meta charset="UTF-8">
 <title>PPRE Studio</title>
 
 <style>
-body { font-family: Arial; margin:0; background:#0f172a; color:white; }
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0f172a;
+  color:white;
+}
 
-.layout { display:flex; height:100vh; }
+.layout{
+  display:flex;
+  height:100vh;
+}
 
-.col { padding:10px; overflow-y:auto; }
+.col{
+  padding:10px;
+  overflow-y:auto;
+}
 
-.left { width:25%; background:#111827; }
-.center { width:30%; background:#1f2937; }
-.right { flex:1; background:#0b1220; }
+.left{width:25%; background:#111827;}
+.center{width:30%; background:#1f2937;}
+.right{flex:1; background:#0b1220;}
 
-input, button { width:100%; padding:6px; margin-top:5px; }
+input,button{
+  width:100%;
+  padding:6px;
+  margin-top:5px;
+}
 
-.item { background:#374151; padding:6px; margin-top:5px; cursor:pointer; }
+.item{
+  background:#374151;
+  padding:6px;
+  margin-top:5px;
+  cursor:pointer;
+}
 
-.output { white-space:pre-line; }
+.item:hover{
+  background:#4b5563;
+}
+
+.output{
+  white-space:pre-line;
+}
 </style>
 </head>
 
@@ -32,7 +57,7 @@ input, button { width:100%; padding:6px; margin-top:5px; }
 <h3>Élèves</h3>
 
 <input id="name" placeholder="Nom élève">
-<button onclick="add()">Ajouter</button>
+<button onclick="addStudent()">Ajouter</button>
 
 <div id="list"></div>
 </div>
@@ -46,8 +71,8 @@ input, button { width:100%; padding:6px; margin-top:5px; }
 <label><input type="checkbox" value="vocabulaire"> Vocabulaire</label><br>
 <label><input type="checkbox" value="oral"> Oral</label><br>
 
-<button onclick="ppre()">Générer PPRE</button>
-<button onclick="famille()">Fiche famille</button>
+<button onclick="generatePPRE()">Générer PPRE</button>
+<button onclick="generateFamily()">Fiche famille</button>
 </div>
 
 <div class="col right">
@@ -62,9 +87,10 @@ input, button { width:100%; padding:6px; margin-top:5px; }
 let students=[];
 let selected=null;
 
-function add(){
+function addStudent(){
   let n=document.getElementById("name").value;
   if(!n) return;
+
   students.push({name:n});
   document.getElementById("name").value="";
   render();
@@ -88,19 +114,20 @@ function checked(){
     .map(c=>c.value);
 }
 
-function ppre(){
+function generatePPRE(){
   if(selected===null) return;
+
   let s=students[selected];
   let d=checked();
 
   let obj=[];
   if(d.includes("lecture")) obj.push("Comprendre un texte");
   if(d.includes("écriture")) obj.push("Améliorer l’écriture");
-  if(d.includes("attention")) obj.push("Se concentrer");
+  if(d.includes("attention")) obj.push("Se concentrer sur une tâche");
   if(d.includes("vocabulaire")) obj.push("Enrichir le lexique");
   if(d.includes("oral")) obj.push("S’exprimer à l’oral");
 
-  document.getElementById("out").innerText =
+  document.getElementById("out").innerText=
 `PPRE
 
 Élève : ${s.name}
@@ -109,12 +136,13 @@ Objectifs :
 - ${obj.join("\n- ")}`;
 }
 
-function famille(){
+function generateFamily(){
   if(selected===null) return;
+
   let s=students[selected];
   let d=checked();
 
-  document.getElementById("out").innerText =
+  document.getElementById("out").innerText=
 `FICHE FAMILLE
 
 Élève : ${s.name}
