@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>TEST JS</title>
+<meta charset="UTF-8">
+<title>PPRE CLEAN TEST</title>
 </head>
 
 <body>
 
-<h1>TEST PAGE</h1>
+<h1>PPRE CLEAN TEST</h1>
 
-<button onclick="test()">CLIQUE</button>
+<input id="name" placeholder="Nom élève">
+<button id="btn">TEST JS</button>
+
+<div id="out"></div>
 
 <script>
-function test(){
-  alert("JS FONCTIONNE");
-}
+document.getElementById("btn").addEventListener("click", function () {
+  document.getElementById("out").innerText = "JS OK - bouton fonctionnel";
+});
 </script>
 
 </body>
