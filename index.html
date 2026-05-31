@@ -2,67 +2,83 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>PPRE Studio Pro+</title>
+<title>PPRE Studio Inspection Pro</title>
 
 <style>
+
 body{
   margin:0;
-  font-family: Arial;
-  background:#f5f7fb;
+  font-family:Arial, sans-serif;
+  background:#eef2f7;
+  color:#1f2937;
 }
 
 .app{
   display:grid;
-  grid-template-columns: 260px 320px 1fr 1fr;
+  grid-template-columns:260px 360px 320px 1fr;
   height:100vh;
 }
 
 /* PANELS */
+
 .panel{
+  background:white;
+  border-right:1px solid #d1d5db;
   padding:14px;
   overflow:auto;
-  background:white;
-  border-right:1px solid #e5e7eb;
 }
 
 h2{
-  font-size:12px;
-  color:#6b7280;
+  font-size:13px;
   text-transform:uppercase;
+  color:#6b7280;
+  margin-top:0;
 }
 
 /* INPUT */
+
 input{
   width:100%;
-  padding:8px;
+  padding:10px;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
   margin-bottom:8px;
-  border:1px solid #d1d5db;
-  border-radius:6px;
+  box-sizing:border-box;
 }
 
-/* BUTTON */
+/* BUTTONS */
+
 button{
-  width:100%;
-  padding:8px;
-  margin-top:5px;
   border:none;
-  border-radius:6px;
+  border-radius:8px;
+  padding:9px;
   cursor:pointer;
   font-weight:600;
 }
 
-.btn{
+.main-btn{
+  width:100%;
   background:#2563eb;
   color:white;
+  margin-top:10px;
 }
 
-/* ELEVES */
+.main-btn:hover{
+  background:#1d4ed8;
+}
+
+/* STUDENTS */
+
 .student{
-  padding:8px;
-  border:1px solid #e5e7eb;
-  border-radius:6px;
-  margin-top:5px;
+  padding:10px;
+  border:1px solid #d1d5db;
+  border-radius:8px;
+  margin-top:6px;
   cursor:pointer;
+}
+
+.student:hover{
+  background:#f3f4f6;
 }
 
 .student.active{
@@ -70,14 +86,25 @@ button{
   border:2px solid #2563eb;
 }
 
-/* SKILLS */
+/* DOMAINS */
+
+.domain{
+  margin-bottom:18px;
+}
+
+.domain-title{
+  font-weight:bold;
+  margin-bottom:8px;
+  color:#111827;
+}
+
 .skill{
-  margin-bottom:14px;
+  margin-bottom:12px;
 }
 
 .skill-title{
-  font-weight:600;
-  margin-bottom:5px;
+  font-size:13px;
+  margin-bottom:4px;
 }
 
 .levels{
@@ -92,39 +119,47 @@ button{
   font-size:11px;
 }
 
+.levels button:hover{
+  background:#cbd5e1;
+}
+
 .levels button.active{
   background:#2563eb;
   color:white;
 }
 
+/* REFERENCE */
+
+.ref-box{
+  background:#f8fafc;
+  border-left:4px solid #2563eb;
+  padding:8px;
+  margin-bottom:8px;
+  border-radius:6px;
+  font-size:12px;
+}
+
+.ref-level{
+  font-weight:bold;
+  color:#1d4ed8;
+}
+
 /* OUTPUT */
+
 .output{
   white-space:pre-line;
-  padding:8px;
   background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:6px;
+  border:1px solid #d1d5db;
+  border-radius:8px;
+  padding:12px;
   font-size:13px;
+  line-height:1.5;
 }
 
-/* REFERENCE */
-.ref{
-  font-size:12px;
-  line-height:1.4;
+.section{
+  margin-bottom:18px;
 }
 
-.ref h3{
-  font-size:13px;
-  margin:8px 0 4px 0;
-  color:#111827;
-}
-
-.ref div{
-  margin-bottom:6px;
-  padding:6px;
-  border-left:3px solid #2563eb;
-  background:#f3f4f6;
-}
 </style>
 </head>
 
@@ -132,19 +167,31 @@ button{
 
 <div class="app">
 
-<!-- ================= ÉLÈVES ================= -->
+<!-- ====================== ELEVES ====================== -->
+
 <div class="panel">
-<h2>Classe</h2>
 
-<input id="name" placeholder="Nom élève">
-<button class="btn" onclick="addStudent()">Ajouter</button>
+<h2>Élèves</h2>
 
-<div id="list"></div>
+<input id="studentName" placeholder="Nom élève">
+
+<button class="main-btn" onclick="addStudent()">Ajouter élève</button>
+
+<div id="studentList"></div>
+
 </div>
 
-<!-- ================= COMPÉTENCES ================= -->
+<!-- ====================== COMPETENCES ====================== -->
+
 <div class="panel">
+
 <h2>Compétences</h2>
+
+<!-- FRANCAIS -->
+
+<div class="domain">
+
+<div class="domain-title">Français</div>
 
 <div class="skill" data-skill="lecture">
 <div class="skill-title">Lecture</div>
@@ -155,6 +202,18 @@ button{
 <button onclick="setLevel('lecture',4)">N4</button>
 <button onclick="setLevel('lecture',5)">N5</button>
 <button onclick="setLevel('lecture',6)">N6</button>
+</div>
+</div>
+
+<div class="skill" data-skill="comprehension">
+<div class="skill-title">Compréhension</div>
+<div class="levels">
+<button onclick="setLevel('comprehension',1)">N1</button>
+<button onclick="setLevel('comprehension',2)">N2</button>
+<button onclick="setLevel('comprehension',3)">N3</button>
+<button onclick="setLevel('comprehension',4)">N4</button>
+<button onclick="setLevel('comprehension',5)">N5</button>
+<button onclick="setLevel('comprehension',6)">N6</button>
 </div>
 </div>
 
@@ -170,6 +229,58 @@ button{
 </div>
 </div>
 
+</div>
+
+<!-- MATHS -->
+
+<div class="domain">
+
+<div class="domain-title">Mathématiques</div>
+
+<div class="skill" data-skill="numeration">
+<div class="skill-title">Numération</div>
+<div class="levels">
+<button onclick="setLevel('numeration',1)">N1</button>
+<button onclick="setLevel('numeration',2)">N2</button>
+<button onclick="setLevel('numeration',3)">N3</button>
+<button onclick="setLevel('numeration',4)">N4</button>
+<button onclick="setLevel('numeration',5)">N5</button>
+<button onclick="setLevel('numeration',6)">N6</button>
+</div>
+</div>
+
+<div class="skill" data-skill="calcul">
+<div class="skill-title">Calcul</div>
+<div class="levels">
+<button onclick="setLevel('calcul',1)">N1</button>
+<button onclick="setLevel('calcul',2)">N2</button>
+<button onclick="setLevel('calcul',3)">N3</button>
+<button onclick="setLevel('calcul',4)">N4</button>
+<button onclick="setLevel('calcul',5)">N5</button>
+<button onclick="setLevel('calcul',6)">N6</button>
+</div>
+</div>
+
+<div class="skill" data-skill="problemes">
+<div class="skill-title">Résolution de problèmes</div>
+<div class="levels">
+<button onclick="setLevel('problemes',1)">N1</button>
+<button onclick="setLevel('problemes',2)">N2</button>
+<button onclick="setLevel('problemes',3)">N3</button>
+<button onclick="setLevel('problemes',4)">N4</button>
+<button onclick="setLevel('problemes',5)">N5</button>
+<button onclick="setLevel('problemes',6)">N6</button>
+</div>
+</div>
+
+</div>
+
+<!-- METHODO -->
+
+<div class="domain">
+
+<div class="domain-title">Méthodologie</div>
+
 <div class="skill" data-skill="attention">
 <div class="skill-title">Attention</div>
 <div class="levels">
@@ -182,107 +293,298 @@ button{
 </div>
 </div>
 
-<button class="btn" onclick="generate()">Générer PPRE</button>
+<div class="skill" data-skill="autonomie">
+<div class="skill-title">Autonomie</div>
+<div class="levels">
+<button onclick="setLevel('autonomie',1)">N1</button>
+<button onclick="setLevel('autonomie',2)">N2</button>
+<button onclick="setLevel('autonomie',3)">N3</button>
+<button onclick="setLevel('autonomie',4)">N4</button>
+<button onclick="setLevel('autonomie',5)">N5</button>
+<button onclick="setLevel('autonomie',6)">N6</button>
 </div>
-
-<!-- ================= REFERENTIEL ================= -->
-<div class="panel ref">
-<h2>Référentiel N1 → N6</h2>
-
-<h3>Lecture</h3>
-<div>N1 : repérage isolé</div>
-<div>N2 : phrases simples</div>
-<div>N3 : compréhension guidée</div>
-<div>N4 : texte structuré</div>
-<div>N5 : inférences</div>
-<div>N6 : analyse + autonomie</div>
-
-<h3>Écriture</h3>
-<div>N1 : geste graphique</div>
-<div>N2 : mots</div>
-<div>N3 : phrases</div>
-<div>N4 : paragraphes</div>
-<div>N5 : structuration</div>
-<div>N6 : production autonome</div>
-
-<h3>Attention</h3>
-<div>N1 : très court</div>
-<div>N2 : consigne simple</div>
-<div>N3 : maintien guidé</div>
-<div>N4 : tâche longue</div>
-<div>N5 : autonomie</div>
-<div>N6 : auto-régulation</div>
+</div>
 
 </div>
 
-<!-- ================= RESULTAT ================= -->
+<button class="main-btn" onclick="generatePPRE()">Générer PPRE</button>
+
+</div>
+
+<!-- ====================== REFERENTIEL ====================== -->
+
 <div class="panel">
-<h2>PPRE</h2>
 
-<div id="title">Aucun élève</div>
-<br>
-<div id="out" class="output">...</div>
+<h2>Référentiel intégré</h2>
+
+<div id="reference">
+
+<div class="ref-box">
+<div class="ref-level">N1</div>
+Très grande difficulté – besoin d'étayage constant.
+</div>
+
+<div class="ref-box">
+<div class="ref-level">N2</div>
+Compétence fragile – réussite uniquement guidée.
+</div>
+
+<div class="ref-box">
+<div class="ref-level">N3</div>
+Réussite partielle avec accompagnement.
+</div>
+
+<div class="ref-box">
+<div class="ref-level">N4</div>
+Compétence en cours d’acquisition.
+</div>
+
+<div class="ref-box">
+<div class="ref-level">N5</div>
+Compétence maîtrisée dans la plupart des situations.
+</div>
+
+<div class="ref-box">
+<div class="ref-level">N6</div>
+Très bonne maîtrise et autonomie.
+</div>
+
+</div>
+
+</div>
+
+<!-- ====================== SORTIE ====================== -->
+
+<div class="panel">
+
+<h2>PPRE généré</h2>
+
+<div id="output" class="output">
+Aucun PPRE généré.
+</div>
+
 </div>
 
 </div>
 
 <script>
 
-let students=[];
-let selected=null;
+/* ====================== DATA ====================== */
 
-let levels={
- lecture:null,
- ecriture:null,
- attention:null
+let students = [];
+let selectedStudent = null;
+
+let levels = {};
+
+const engine = {
+
+lecture:{
+1:{
+objectif:"Identifier quelques mots familiers.",
+aide:"Lecture accompagnée quotidienne."
+},
+2:{
+objectif:"Lire des phrases simples avec guidage.",
+aide:"Surlignage et reformulation orale."
+},
+3:{
+objectif:"Comprendre un texte court.",
+aide:"Questionnement guidé."
+}
+},
+
+comprehension:{
+1:{
+objectif:"Repérer des informations explicites.",
+aide:"Questions fermées."
+},
+2:{
+objectif:"Comprendre l’essentiel d’un texte.",
+aide:"Lecture fractionnée."
+}
+},
+
+ecriture:{
+1:{
+objectif:"Produire des mots lisibles.",
+aide:"Modèles et lignage adapté."
+},
+2:{
+objectif:"Écrire des phrases simples.",
+aide:"Banque de mots."
+}
+},
+
+numeration:{
+1:{
+objectif:"Reconnaître les nombres simples.",
+aide:"Manipulation concrète."
+},
+2:{
+objectif:"Comparer des nombres.",
+aide:"Droite numérique."
+}
+},
+
+calcul:{
+1:{
+objectif:"Calculer avec aide.",
+aide:"Procédures guidées."
+},
+2:{
+objectif:"Utiliser des stratégies simples.",
+aide:"Manipulation et schémas."
+}
+},
+
+problemes:{
+1:{
+objectif:"Comprendre la situation problème.",
+aide:"Lecture guidée."
+},
+2:{
+objectif:"Identifier l’opération utile.",
+aide:"Schématisation."
+}
+},
+
+attention:{
+1:{
+objectif:"Maintenir l’attention quelques minutes.",
+aide:"Consignes courtes."
+},
+2:{
+objectif:"Rester engagé dans la tâche.",
+aide:"Fractionnement."
+}
+},
+
+autonomie:{
+1:{
+objectif:"Commencer une tâche avec aide.",
+aide:"Guidage pas à pas."
+},
+2:{
+objectif:"Utiliser des outils connus.",
+aide:"Checklist visuelle."
+}
+}
+
 };
 
+/* ====================== ELEVES ====================== */
+
 function addStudent(){
- let n=document.getElementById("name").value;
- if(!n) return;
- students.push(n);
- document.getElementById("name").value="";
- render();
+
+let name = document.getElementById("studentName").value;
+
+if(!name) return;
+
+students.push(name);
+
+document.getElementById("studentName").value="";
+
+renderStudents();
+
 }
 
-function render(){
- document.getElementById("list").innerHTML=
- students.map((s,i)=>
- `<div class="student ${selected===i?'active':''}" onclick="select(${i})">${s}</div>`
- ).join("");
+function renderStudents(){
+
+document.getElementById("studentList").innerHTML =
+students.map((s,i)=>
+`
+<div class="student ${selectedStudent===i ? 'active':''}"
+onclick="selectStudent(${i})">
+${s}
+</div>
+`
+).join("");
+
 }
 
-function select(i){
- selected=i;
- document.getElementById("title").innerText=students[i];
- render();
+function selectStudent(i){
+
+selectedStudent=i;
+
+renderStudents();
+
 }
+
+/* ====================== NIVEAUX ====================== */
 
 function setLevel(skill,level){
- levels[skill]=level;
 
- document.querySelectorAll(`[data-skill="${skill}"] button`)
- .forEach((b,i)=>{
- b.classList.remove("active");
- if(i===level-1) b.classList.add("active");
- });
+levels[skill]=level;
+
+document.querySelectorAll(`[data-skill="${skill}"] button`)
+.forEach((btn,i)=>{
+
+btn.classList.remove("active");
+
+if(i===level-1){
+btn.classList.add("active");
 }
 
-function generate(){
- if(selected===null) return;
+});
 
- let name=students[selected];
+}
 
- let text="PPRE – "+name+"\n\n";
+/* ====================== GENERATION ====================== */
 
- Object.keys(levels).forEach(skill=>{
- let lvl=levels[skill];
- if(lvl){
- text+=skill.toUpperCase()+" : N"+lvl+"\n";
- }
- });
+function generatePPRE(){
 
- document.getElementById("out").innerText=text;
+if(selectedStudent===null){
+alert("Sélectionner un élève");
+return;
+}
+
+let name = students[selectedStudent];
+
+let text = "PPRE – " + name + "\n\n";
+
+text += "CONSTATS\n\n";
+
+Object.keys(levels).forEach(skill=>{
+
+let lvl = levels[skill];
+
+if(lvl){
+
+text += "- " + skill.toUpperCase() + " : N" + lvl + "\n";
+
+}
+
+});
+
+text += "\nOBJECTIFS ET AIDES\n\n";
+
+Object.keys(levels).forEach(skill=>{
+
+let lvl = levels[skill];
+
+if(engine[skill] && engine[skill][lvl]){
+
+text += skill.toUpperCase() + "\n";
+
+text += "Objectif : " + engine[skill][lvl].objectif + "\n";
+
+text += "Aide : " + engine[skill][lvl].aide + "\n\n";
+
+}
+
+});
+
+text += "AMÉNAGEMENTS\n";
+text += "- Consignes reformulées\n";
+text += "- Étayage progressif\n";
+text += "- Valorisation des réussites\n\n";
+
+text += "PARTENARIAT FAMILLE\n";
+text += "- Encourager la lecture quotidienne\n";
+text += "- Vérifier les leçons régulièrement\n";
+
+document.getElementById("output").innerText=text;
+
 }
 
 </script>
