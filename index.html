@@ -209,7 +209,10 @@ function addStudent(){
 function render(){
   document.getElementById("list").innerHTML =
     students.map((s,i)=>
-      `<div class="student" onclick="select(${i})">${s}</div>`
+      `<div class="student ${selected===i ? 'active' : ''}"
+            onclick="select(${i})">
+        ${s}
+      </div>`
     ).join("");
 }
 
